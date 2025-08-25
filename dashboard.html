@@ -5,40 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Health Dashboard</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      flex-direction: column;
-      padding: 20px;
-    }
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      width: 100%;
-      max-width: 500px;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      cursor: pointer;
-      font-size: 18px;
-    }
-    .card:hover {
-      background: #007bff;
-      color: white;
-    }
-  </style>
 </head>
 <body>
-  <h1>Welcome to Health Dashboard</h1>
-  <div class="dashboard">
-    <div class="card">Blood Pressure</div>
-    <div class="card">Glucose</div>
-    <div class="card">Temperature</div>
-    <div class="card">Heart Rate</div>
+  <div class="container">
+    <h1 id="welcome-text">Welcome</h1>
+    <div class="dashboard">
+      <div class="card">Blood Pressure</div>
+      <div class="card">Glucose</div>
+      <div class="card">Temperature</div>
+      <div class="card">Heart Rate</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
+  
+  <script src="dashboard.js"></script>
 </body>
 </html>
