@@ -1,32 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health App - Login</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health App — Sign Up / Login</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <meta name="description" content="Simple signup and login, then dashboard with health features." />
 </head>
 <body>
   <div class="container">
-    <!-- SIGN UP BOX -->
-    <div id="signup-box" class="box">
-      <h2>Sign Up</h2>
-      <input type="email" id="signupEmail" placeholder="Email" />
-      <input type="password" id="signupPassword" placeholder="Password" />
+
+    <!-- SIGN UP (shown first) -->
+    <div id="signupBox" class="box">
+      <h2>Create Account</h2>
+      <input type="email" id="signupEmail" placeholder="Email" autocomplete="username" />
+      <input type="password" id="signupPassword" placeholder="Password" autocomplete="new-password" />
       <button id="signupBtn">Sign Up</button>
-      <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+      <p>Already have an account?
+        <a href="#" id="showLogin">Go to Login</a>
+      </p>
+      <div id="signupMsg" class="msg"></div>
     </div>
 
-    <!-- LOGIN BOX -->
-    <div id="login-box" class="box hidden">
+    <!-- LOGIN (hidden initially) -->
+    <div id="loginBox" class="box hidden">
       <h2>Login</h2>
-      <input type="email" id="loginEmail" placeholder="Email" />
-      <input type="password" id="loginPassword" placeholder="Password" />
+      <input type="email" id="loginEmail" placeholder="Email" autocomplete="username"/>
+      <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password"/>
       <button id="loginBtn">Login</button>
-      <p>No account? <a href="#" id="showSignup">Sign Up</a></p>
+      <p>No account?
+        <a href="#" id="showSignup">Create one</a>
+      </p>
+      <div id="loginMsg" class="msg"></div>
     </div>
+
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
