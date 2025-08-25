@@ -1,121 +1,125 @@
-/* Reset */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 /* Auth Container */
 .auth-container {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  max-width: 400px;
 }
 
 .auth-card {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 30px;
-  border-radius: 15px;
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem;
   text-align: center;
-  width: 350px;
-  color: #fff;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
 .auth-card h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  color: #fff;
 }
 
-.auth-card h2 {
-  margin: 15px 0;
-}
-
-input {
-  width: 90%;
-  padding: 12px;
-  margin: 10px 0;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-.primary-btn {
+.auth-card input {
   width: 100%;
-  padding: 12px;
-  background: #00c6ff;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+}
+
+.auth-card button {
+  width: 100%;
+  padding: 0.8rem;
+  background: #2575fc;
   color: white;
-  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s ease;
 }
 
-.primary-btn:hover {
-  background: #0072ff;
+.auth-card p {
+  margin-top: 1rem;
 }
 
-.msg {
-  font-size: 14px;
-  margin-top: 10px;
-  color: yellow;
+.auth-card a {
+  color: #fff;
+  text-decoration: underline;
 }
 
 /* Dashboard */
-header {
+.dashboard-header {
+  width: 100%;
+  background: #2575fc;
+  padding: 1rem;
+  text-align: center;
   position: fixed;
   top: 0;
-  width: 100%;
-  padding: 15px;
-  background: rgba(0,0,0,0.4);
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  left: 0;
 }
 
 .logout-btn {
-  padding: 10px 15px;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
   background: red;
   color: white;
   border: none;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.dashboard {
+.dashboard-container {
+  margin-top: 80px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.options-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  margin: 100px 20px 20px;
+  gap: 1rem;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 30px;
-  border-radius: 15px;
-  color: white;
-  font-size: 18px;
+  background: white;
+  color: #2575fc;
+  padding: 1rem;
+  border-radius: 10px;
   text-align: center;
   font-weight: bold;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease;
+  cursor: pointer;
+  transition: transform 0.3s;
 }
 
 .card:hover {
   transform: scale(1.05);
+}
+
+.feature-section {
+  margin-top: 2rem;
+  background: white;
+  color: #222;
+  padding: 1rem;
+  border-radius: 10px;
 }
