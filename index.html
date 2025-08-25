@@ -10,29 +10,22 @@
   <div class="auth-container">
     <div class="auth-card">
       <h1>Health Monitor</h1>
-
-      <!-- Sign Up Form -->
-      <div id="signup-container">
+      <div id="signupForm">
         <h2>Create Account</h2>
-        <input type="email" id="signup-email" placeholder="Enter your email">
-        <input type="password" id="signup-password" placeholder="Enter password">
-        <button class="primary-btn" onclick="signUp()">Sign Up</button>
-        <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
-        <p id="signup-message" class="msg"></p>
+        <input type="email" id="signupEmail" placeholder="Email" required>
+        <input type="password" id="signupPassword" placeholder="Password" required>
+        <button onclick="signup()">Sign Up</button>
+        <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
       </div>
-
-      <!-- Login Form -->
-      <div id="login-container" style="display:none;">
-        <h2>Welcome Back</h2>
-        <input type="email" id="login-email" placeholder="Enter your email">
-        <input type="password" id="login-password" placeholder="Enter password">
-        <button class="primary-btn" onclick="login()">Login</button>
-        <p>No account? <a href="#" onclick="showSignup()">Sign Up</a></p>
-        <p id="login-message" class="msg"></p>
+      <div id="loginForm" style="display:none;">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <p>Don’t have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a></p>
       </div>
     </div>
   </div>
-
   <script src="app.js"></script>
 </body>
 </html>
