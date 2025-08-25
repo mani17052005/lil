@@ -3,30 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health App - Login / Sign Up</title>
+  <title>Health App - Sign Up / Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-    <div class="form-container" id="signup-container">
+    <h1>Health Monitor</h1>
+    
+    <!-- Sign Up Form -->
+    <div id="signup-container">
       <h2>Create Account</h2>
-      <input type="email" id="signup-email" placeholder="Email" required>
-      <input type="password" id="signup-password" placeholder="Password" required>
+      <input type="email" id="signup-email" placeholder="Email">
+      <input type="password" id="signup-password" placeholder="Password">
       <button onclick="signUp()">Sign Up</button>
-      <p>Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
+      <p>Already have an account? <a href="#" onclick="showLogin()">Go to Login</a></p>
       <p id="signup-message"></p>
     </div>
-
-    <div class="form-container hidden" id="login-container">
+    
+    <!-- Login Form -->
+    <div id="login-container" style="display:none;">
       <h2>Login</h2>
-      <input type="email" id="login-email" placeholder="Email" required>
-      <input type="password" id="login-password" placeholder="Password" required>
+      <input type="email" id="login-email" placeholder="Email">
+      <input type="password" id="login-password" placeholder="Password">
       <button onclick="login()">Login</button>
-      <p>No account? <a href="#" onclick="toggleForms()">Create one</a></p>
+      <p>No account? <a href="#" onclick="showSignup()">Create one</a></p>
       <p id="login-message"></p>
     </div>
   </div>
-
+  
   <script src="app.js"></script>
 </body>
 </html>
