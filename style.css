@@ -1,29 +1,44 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
+/* Reset */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-.container {
-  background: white;
+/* Auth Container */
+.auth-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.2);
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 350px;
+  border-radius: 15px;
+  backdrop-filter: blur(12px);
   text-align: center;
+  width: 350px;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
-h1 {
-  margin-bottom: 20px;
-  color: #333;
+.auth-card h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
-h2 {
+.auth-card h2 {
   margin: 15px 0;
 }
 
@@ -31,51 +46,76 @@ input {
   width: 90%;
   padding: 12px;
   margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: none;
+  border-radius: 8px;
   font-size: 16px;
 }
 
-button {
+.primary-btn {
   width: 100%;
   padding: 12px;
-  background: #007bff;
-  color: white;
+  background: #00c6ff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s ease;
 }
 
-button:hover {
-  background: #0056b3;
+.primary-btn:hover {
+  background: #0072ff;
+}
+
+.msg {
+  font-size: 14px;
+  margin-top: 10px;
+  color: yellow;
+}
+
+/* Dashboard */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 15px;
+  background: rgba(0,0,0,0.4);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout-btn {
+  padding: 10px 15px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
-  margin-top: 20px;
+  margin: 100px 20px 20px;
 }
 
 .card {
-  background: #007bff;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 30px;
+  border-radius: 15px;
   color: white;
-  padding: 20px;
-  border-radius: 10px;
+  font-size: 18px;
+  text-align: center;
   font-weight: bold;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
 
-.logout-btn {
-  background: red;
-  margin-top: 20px;
-}
-
-p a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-p a:hover {
-  text-decoration: underline;
+.card:hover {
+  transform: scale(1.05);
 }
