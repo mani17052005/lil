@@ -3,34 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health App - Sign Up / Login</title>
+  <title>Health Monitor - Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Health Monitor</h1>
-    
-    <!-- Sign Up Form -->
-    <div id="signup-container">
-      <h2>Create Account</h2>
-      <input type="email" id="signup-email" placeholder="Email">
-      <input type="password" id="signup-password" placeholder="Password">
-      <button onclick="signUp()">Sign Up</button>
-      <p>Already have an account? <a href="#" onclick="showLogin()">Go to Login</a></p>
-      <p id="signup-message"></p>
-    </div>
-    
-    <!-- Login Form -->
-    <div id="login-container" style="display:none;">
-      <h2>Login</h2>
-      <input type="email" id="login-email" placeholder="Email">
-      <input type="password" id="login-password" placeholder="Password">
-      <button onclick="login()">Login</button>
-      <p>No account? <a href="#" onclick="showSignup()">Create one</a></p>
-      <p id="login-message"></p>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1>Health Monitor</h1>
+
+      <!-- Sign Up Form -->
+      <div id="signup-container">
+        <h2>Create Account</h2>
+        <input type="email" id="signup-email" placeholder="Enter your email">
+        <input type="password" id="signup-password" placeholder="Enter password">
+        <button class="primary-btn" onclick="signUp()">Sign Up</button>
+        <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+        <p id="signup-message" class="msg"></p>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-container" style="display:none;">
+        <h2>Welcome Back</h2>
+        <input type="email" id="login-email" placeholder="Enter your email">
+        <input type="password" id="login-password" placeholder="Enter password">
+        <button class="primary-btn" onclick="login()">Login</button>
+        <p>No account? <a href="#" onclick="showSignup()">Sign Up</a></p>
+        <p id="login-message" class="msg"></p>
+      </div>
     </div>
   </div>
-  
+
   <script src="app.js"></script>
 </body>
 </html>
