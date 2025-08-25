@@ -3,86 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#6200ee" />
-  <title>Next-Gen Health Monitor</title>
-  
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="stylesheet" href="./styles.css" />
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Simple Login</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Next-Gen Health Monitor</h1>
-  </header>
-
-  <!-- LOGIN SECTION -->
-  <section id="login-section" class="active page">
-    <div class="card form-card">
+  <div class="container">
+    <div id="login-box" class="box">
       <h2>Login</h2>
-      <input type="email" id="email" placeholder="Email" class="input-field"/>
-      <input type="password" id="password" placeholder="Password" class="input-field"/>
-      <button id="loginBtn" class="btn primary">Login</button>
-      <p class="switch-text">No account? <a href="#" id="signupLink" class="link">Sign up</a></p>
+      <input type="email" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button id="loginBtn">Login</button>
+      <p>No account? <a href="#" id="showSignup">Sign Up</a></p>
     </div>
-  </section>
 
-  <!-- SIGNUP SECTION -->
-  <section id="signup-section" class="page">
-    <div class="card form-card">
+    <div id="signup-box" class="box hidden">
       <h2>Sign Up</h2>
-      <input type="text" id="name" placeholder="Full Name" class="input-field"/>
-      <input type="email" id="signupEmail" placeholder="Email" class="input-field"/>
-      <input type="password" id="signupPassword" placeholder="Password" class="input-field"/>
-      <button id="signupBtn" class="btn primary">Create Account</button>
-      <p class="switch-text">Already have an account? <a href="#" id="loginLink" class="link">Login</a></p>
+      <input type="email" id="signupEmail" placeholder="Email" />
+      <input type="password" id="signupPassword" placeholder="Password" />
+      <button id="signupBtn">Sign Up</button>
+      <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
     </div>
-  </section>
+  </div>
 
-  <!-- DASHBOARD SECTION -->
-  <section id="dashboard-section" class="page">
-    <div class="card user-card">
-      <h2>Welcome, <span id="userName"></span></h2>
-      <button id="logoutBtn" class="btn danger">Logout</button>
-    </div>
-
-    <!-- Health Stats -->
-    <div class="grid-container">
-      <div class="card stat-card">
-        <p>Glucose</p>
-        <div class="value" id="glucoseValue">--</div>
-        <div class="status" id="glucoseStatus">Waiting...</div>
-      </div>
-      <div class="card stat-card">
-        <p>Blood Pressure</p>
-        <div class="value" id="bpValue">--</div>
-      </div>
-      <div class="card stat-card">
-        <p>Heartbeat</p>
-        <div class="value" id="heartbeatValue">--</div>
-      </div>
-      <div class="card stat-card">
-        <p>Temperature</p>
-        <div class="value" id="temperatureValue">--</div>
-      </div>
-    </div>
-
-    <!-- History Chart -->
-    <div class="card chart-card">
-      <p>Glucose History</p>
-      <canvas id="glucoseChart"></canvas>
-    </div>
-  </section>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-  <script src="./app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
