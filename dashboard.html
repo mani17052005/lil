@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Dashboard</title>
+  <title>Dashboard - Health Monitor</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
+  <header>
     <h1 id="welcome-text">Welcome</h1>
-    <div class="dashboard">
-      <div class="card">Blood Pressure</div>
-      <div class="card">Glucose</div>
-      <div class="card">Temperature</div>
-      <div class="card">Heart Rate</div>
-    </div>
     <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
-  
+  </header>
+
+  <main class="dashboard">
+    <div class="card">🩺 Blood Pressure</div>
+    <div class="card">🩸 Glucose Level</div>
+    <div class="card">🌡️ Temperature</div>
+    <div class="card">❤️ Heart Rate</div>
+  </main>
+
   <script src="dashboard.js"></script>
 </body>
 </html>
