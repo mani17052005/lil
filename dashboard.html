@@ -5,18 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Health Monitor</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header>
-    <h1 id="welcome-text">Welcome</h1>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+  <header class="dashboard-header">
+    <h1>Welcome to Health Monitor</h1>
+    <button onclick="logout()" class="logout-btn">Logout</button>
   </header>
 
-  <main class="dashboard">
-    <div class="card">🩺 Blood Pressure</div>
-    <div class="card">🩸 Glucose Level</div>
-    <div class="card">🌡️ Temperature</div>
-    <div class="card">❤️ Heart Rate</div>
+  <main class="dashboard-container">
+    <div class="options-grid">
+      <div class="card" onclick="showFeature('glucose')">Glucose Monitor</div>
+      <div class="card" onclick="showFeature('bp')">Blood Pressure</div>
+      <div class="card" onclick="showFeature('heart')">Heart Rate</div>
+      <div class="card" onclick="showFeature('temp')">Body Temperature</div>
+    </div>
+
+    <section id="featureSection" class="feature-section">
+      <h2 id="featureTitle">Select a feature above</h2>
+      <canvas id="featureChart"></canvas>
+    </section>
   </main>
 
   <script src="dashboard.js"></script>
