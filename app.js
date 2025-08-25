@@ -1,36 +1,35 @@
-function signUp() {
-  const email = document.getElementById('signup-email').value;
-  const password = document.getElementById('signup-password').value;
-
-  if(email && password) {
-    localStorage.setItem('userEmail', email);
-    localStorage.setItem('userPassword', password);
-    document.getElementById('signup-message').innerText = "✅ Account created! Login now.";
+function toggleForm(form) {
+  if (form === 'signup') {
+    document.getElementById('signupForm').style.display = 'block';
+    document.getElementById('loginForm').style.display = 'none';
   } else {
-    alert("Please fill all fields");
+    document.getElementById('signupForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
   }
+}
+
+function signup() {
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+
+  if (!email || !password) {
+    alert('Please fill all fields');
+    return;
+  }
+
+  localStorage.setItem('user', JSON.stringify({ email, password }));
+  alert('Sign up successful! Please login.');
+  toggleForm('login');
 }
 
 function login() {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const user = JSON.parse(localStorage.getItem('user'));
 
-  const storedEmail = localStorage.getItem('userEmail');
-  const storedPassword = localStorage.getItem('userPassword');
-
-  if(email === storedEmail && password === storedPassword) {
-    window.location.href = "dashboard.html";
+  if (user && user.email === email && user.password === password) {
+    window.location.href = 'dashboard.html';
   } else {
-    document.getElementById('login-message').innerText = "❌ Invalid credentials!";
+    alert('Invalid credentials');
   }
-}
-
-function showLogin() {
-  document.getElementById('signup-container').style.display = "none";
-  document.getElementById('login-container').style.display = "block";
-}
-
-function showSignup() {
-  document.getElementById('signup-container').style.display = "block";
-  document.getElementById('login-container').style.display = "none";
 }
