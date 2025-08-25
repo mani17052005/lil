@@ -1,31 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health App — Dashboard</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* Dashboard-specific tweaks (reuses base styles) */
+    header {
+      max-width: 980px;
+      margin: 20px auto 0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #6c63ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+    main {
+      max-width: 980px;
+      margin: 16px auto;
+      padding: 0 16px 24px;
+    }
+    .welcome { font-weight: 600; }
+    .logout {
+      background: #ff5a5f;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 0;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .tile {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.06);
+      text-align: center;
+    }
+    .tile h3 { margin-bottom: 8px; }
+    .tile button {
+      margin-top: 10px;
+      background: #6c63ff;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.06);
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Welcome to Health Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
+    <div class="welcome">Welcome, <span id="who"></span></div>
+    <button id="logoutBtn" class="logout">Logout</button>
   </header>
 
-  <main class="dashboard">
-    <h2>Select a Health Feature</h2>
-    <div class="features">
-      <button onclick="openFeature('glucose')">Glucose Monitoring</button>
-      <button onclick="openFeature('bp')">Blood Pressure</button>
-      <button onclick="openFeature('temp')">Body Temperature</button>
-      <button onclick="openFeature('heart')">Heart Rate</button>
+  <main>
+    <h2>Main Interface</h2>
+    <div class="grid">
+      <div class="tile">
+        <h3>Glucose</h3>
+        <p>Quick view & mock reading</p>
+        <button onclick="openFeature('glucose')">Open</button>
+      </div>
+      <div class="tile">
+        <h3>Blood Pressure</h3>
+        <p>Quick view & mock reading</p>
+        <button onclick="openFeature('bp')">Open</button>
+      </div>
+      <div class="tile">
+        <h3>Temperature</h3>
+        <p>Quick view & mock reading</p>
+        <button onclick="openFeature('temp')">Open</button>
+      </div>
+      <div class="tile">
+        <h3>Heart Rate</h3>
+        <p>Quick view & mock reading</p>
+        <button onclick="openFeature('heart')">Open</button>
+      </div>
     </div>
 
-    <div id="featureBox" class="feature-box">
-      <p>Select an option to view data</p>
+    <div id="featurePanel" class="panel">
+      <em>Select a tile to show data here…</em>
     </div>
   </main>
 
-  <script src="dashboard.js"></script>
+  <script src="dashboard.js" defer></script>
 </body>
 </html>
