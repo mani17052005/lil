@@ -1,41 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Health App — Sign Up / Login</title>
-  <link rel="stylesheet" href="styles.css"/>
-  <meta name="description" content="Simple signup and login, then dashboard with health features." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health App - Login / Sign Up</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-
-    <!-- SIGN UP (shown first) -->
-    <div id="signupBox" class="box">
+    <div class="form-container" id="signup-container">
       <h2>Create Account</h2>
-      <input type="email" id="signupEmail" placeholder="Email" autocomplete="username" />
-      <input type="password" id="signupPassword" placeholder="Password" autocomplete="new-password" />
-      <button id="signupBtn">Sign Up</button>
-      <p>Already have an account?
-        <a href="#" id="showLogin">Go to Login</a>
-      </p>
-      <div id="signupMsg" class="msg"></div>
+      <input type="email" id="signup-email" placeholder="Email" required>
+      <input type="password" id="signup-password" placeholder="Password" required>
+      <button onclick="signUp()">Sign Up</button>
+      <p>Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
+      <p id="signup-message"></p>
     </div>
 
-    <!-- LOGIN (hidden initially) -->
-    <div id="loginBox" class="box hidden">
+    <div class="form-container hidden" id="login-container">
       <h2>Login</h2>
-      <input type="email" id="loginEmail" placeholder="Email" autocomplete="username"/>
-      <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password"/>
-      <button id="loginBtn">Login</button>
-      <p>No account?
-        <a href="#" id="showSignup">Create one</a>
-      </p>
-      <div id="loginMsg" class="msg"></div>
+      <input type="email" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button onclick="login()">Login</button>
+      <p>No account? <a href="#" onclick="toggleForms()">Create one</a></p>
+      <p id="login-message"></p>
     </div>
-
   </div>
 
-  <script src="app.js" defer></script>
+  <script src="app.js"></script>
 </body>
 </html>
