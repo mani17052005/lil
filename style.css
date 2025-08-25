@@ -3,61 +3,52 @@ body {
   background: #f8f9fa;
   margin: 0;
   padding: 0;
-}
-
-header {
-  background: #6200ee;
-  color: white;
-  text-align: center;
-  padding: 1rem;
-  position: relative;
-}
-
-header button {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  background: #ff5252;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .box {
   background: #fff;
-  padding: 20px;
-  width: 300px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 25px;
+  width: 320px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   text-align: center;
+  margin: 10px;
+}
+
+.box h2 {
+  margin-bottom: 15px;
 }
 
 .box input {
   width: 90%;
-  padding: 10px;
+  padding: 12px;
   margin: 10px 0;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 16px;
 }
 
 button {
   width: 95%;
-  padding: 10px;
+  padding: 12px;
   background: #6200ee;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   margin-top: 10px;
   cursor: pointer;
+  font-size: 16px;
 }
 
 button:hover {
@@ -68,23 +59,12 @@ button:hover {
   display: none;
 }
 
-.dashboard {
-  padding: 20px;
-  text-align: center;
+p {
+  margin-top: 15px;
+  font-size: 14px;
 }
 
-.features button {
-  margin: 10px;
-  padding: 15px;
-  width: 200px;
-  font-size: 16px;
-  border-radius: 6px;
-}
-
-.feature-box {
-  margin-top: 20px;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+p a {
+  color: #6200ee;
+  text-decoration: none;
 }
