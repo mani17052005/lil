@@ -1,33 +1,36 @@
-function toggleForms() {
-  document.getElementById('signup-container').classList.toggle('hidden');
-  document.getElementById('login-container').classList.toggle('hidden');
-}
-
-// Store user data in localStorage (for demo purposes)
 function signUp() {
   const email = document.getElementById('signup-email').value;
   const password = document.getElementById('signup-password').value;
-
-  if (email && password) {
+  
+  if(email && password) {
     localStorage.setItem('userEmail', email);
     localStorage.setItem('userPassword', password);
-    document.getElementById('signup-message').innerText = 'Account created! Please login.';
-    setTimeout(toggleForms, 1500);
+    document.getElementById('signup-message').innerText = "Account created! You can log in now.";
   } else {
-    document.getElementById('signup-message').innerText = 'Please fill in all fields.';
+    alert("Please enter email and password");
   }
 }
 
 function login() {
   const email = document.getElementById('login-email').value;
   const password = document.getElementById('login-password').value;
-
+  
   const storedEmail = localStorage.getItem('userEmail');
   const storedPassword = localStorage.getItem('userPassword');
-
-  if (email === storedEmail && password === storedPassword) {
-    window.location.href = 'dashboard.html'; // Redirect to dashboard
+  
+  if(email === storedEmail && password === storedPassword) {
+    window.location.href = "dashboard.html";
   } else {
-    document.getElementById('login-message').innerText = 'Invalid email or password.';
+    document.getElementById('login-message').innerText = "Invalid credentials!";
   }
+}
+
+function showLogin() {
+  document.getElementById('signup-container').style.display = "none";
+  document.getElementById('login-container').style.display = "block";
+}
+
+function showSignup() {
+  document.getElementById('signup-container').style.display = "block";
+  document.getElementById('login-container').style.display = "none";
 }
