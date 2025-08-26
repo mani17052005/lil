@@ -1,16 +1,15 @@
-function logout() {
-  window.location.href = 'index.html';
-}
+const ctx = document.getElementById('glucoseChart').getContext('2d');
+let glucoseData = [110, 112, 115, 118, 120];
 
-const ctx = document.getElementById('featureChart').getContext('2d');
 let chart = new Chart(ctx, {
   type: 'line',
   data: {
     labels: ['T-4', 'T-3', 'T-2', 'T-1', 'Now'],
     datasets: [{
-      label: 'Value',
-      data: [0, 0, 0, 0, 0],
-      borderColor: '#2575fc',
+      label: 'Glucose (mg/dL)',
+      data: glucoseData,
+      borderColor: '#fff',
+      borderWidth: 2,
       fill: false,
       tension: 0.3
     }]
@@ -18,29 +17,30 @@ let chart = new Chart(ctx, {
   options: { responsive: true }
 });
 
-function showFeature(feature) {
-  const title = document.getElementById('featureTitle');
-  let label = '';
-  let min = 0, max = 0;
+function updateGlucose() {
+  let value = Math.floor(90 + Math.random() * 50);
+  document.getElementById('glucoseValue').textContent = value + ' mg/dL';
 
-  if (feature === 'glucose') {
-    label = 'Glucose (mg/dL)';
-    min = 90; max = 140;
-  } else if (feature === 'bp') {
-    label = 'Blood Pressure (mmHg)';
-    min = 70; max = 130;
-  } else if (feature === 'heart') {
-    label = 'Heart Rate (bpm)';
-    min = 60; max = 120;
-  } else if (feature === 'temp') {
-    label = 'Body Temp (°C)';
-    min = 36; max = 38;
+  let alertMsg = document.getElementById('alertMessage');
+  if(value < 100) {
+    alertMsg.textContent = 'Status: Normal';
+    alertMsg.style.color = '#0f0';
+  } else if(value < 140) {
+    alertMsg.textContent = 'Status: Elevated';
+    alertMsg.style.color = '#ff0';
+  } else {
+    alertMsg.textContent = 'Status: High - Alert!';
+    alertMsg.style.color = '#f00';
   }
 
-  title.textContent = label;
-
-  let newData = Array.from({ length: 5 }, () => Math.floor(min + Math.random() * (max - min)));
-  chart.data.datasets[0].data = newData;
-  chart.data.datasets[0].label = label;
+  glucoseData.push(value);
+  if(glucoseData.length > 5) glucoseData.shift();
+  chart.data.datasets[0].data = glucoseData;
   chart.update();
+}
+
+setInterval(updateGlucose, 5000);
+
+function logout() {
+  window.location.href = 'index.html';
 }
