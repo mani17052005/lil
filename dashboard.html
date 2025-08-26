@@ -13,7 +13,6 @@
     <button class="logout-btn" onclick="logout()">Logout</button>
   </header>
 
-  <!-- Tabs (sticky on mobile, scrollable) -->
   <nav class="tabs">
     <button class="tab active" data-tab="glucose" onclick="setActiveTab('glucose')">🩸 Glucose</button>
     <button class="tab" data-tab="bp" onclick="setActiveTab('bp')">🩺 Blood Pressure</button>
@@ -22,20 +21,17 @@
   </nav>
 
   <main class="dash-main">
-    <!-- Current metric card -->
     <section class="glass-card metric-card" id="metricCard">
       <h2 id="metricTitle">Glucose</h2>
       <div class="metric-value" id="metricValue">--</div>
       <div class="metric-status" id="metricStatus">Waiting…</div>
     </section>
 
-    <!-- Chart -->
     <section class="glass-card chart-card">
       <h3 id="chartTitle">Glucose Trend</h3>
       <canvas id="metricChart"></canvas>
     </section>
 
-    <!-- Quick overview mini-cards -->
     <section class="mini-grid">
       <div class="mini glass-card">
         <div class="mini-title">Glucose</div>

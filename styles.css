@@ -1,0 +1,137 @@
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+body {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: #fff;
+  min-height: 100vh;
+}
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.auth-box {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.auth-box h1 {
+  margin-bottom: 15px;
+  font-size: 1.8rem;
+}
+.auth-box h2 {
+  margin-bottom: 10px;
+}
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+.btn-primary {
+  width: 100%;
+  padding: 10px;
+  background: #6200ee;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.btn-primary:hover {
+  background: #3700b3;
+}
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(0, 0, 0, 0.3);
+}
+.logout-btn {
+  padding: 8px 15px;
+  background: #ff1744;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  background: #d50000;
+}
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+  gap: 10px;
+}
+.tab {
+  padding: 10px 15px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tab.active {
+  background: #6200ee;
+}
+.dash-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.metric-card {
+  text-align: center;
+}
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+.metric-status {
+  font-size: 1.2rem;
+}
+.chart-card canvas {
+  width: 100% !important;
+  height: 250px !important;
+}
+.mini-grid {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+.mini {
+  text-align: center;
+  padding: 15px 0;
+}
+.mini-title {
+  font-size: 0.9rem;
+}
+.mini-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+}

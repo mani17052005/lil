@@ -1,144 +1,114 @@
-// Redirect if not "logged in"
-(() => {
-  const u = JSON.parse(localStorage.getItem('ht_user') || 'null');
-  if(!u) location.href = 'index.html';
-  else document.getElementById('welcome').textContent = `Welcome, ${u.email}`;
-})();
 
-function logout(){ location.href = 'index.html'; }
+let currentTab = 'glucose';
 
-/* ---------- Data State ---------- */
-const labels = ['T-4','T-3','T-2','T-1','Now'];
-let series = {
-  glucose: [110,118,122,130,126],
-  bpSys:   [118,122,126,124,120],
-  bpDia:   [78, 80, 82, 81, 79],
-  temp:    [36.6,36.8,37.0,36.7,36.8],
-  heart:   [72, 78, 80, 76, 79]
-};
-let activeTab = 'glucose';
-
-/* ---------- Chart ---------- */
-const ctx = document.getElementById('metricChart').getContext('2d');
-let chart = new Chart(ctx, {
+const chartCtx = document.getElementById('metricChart').getContext('2d');
+let chart = new Chart(chartCtx, {
   type: 'line',
-  data: { labels, datasets: [{ label: '', data: [], borderColor:'#fff', borderWidth:2, fill:false, tension:0.32 }]},
-  options: { responsive:true, plugins:{ legend:{display:true}}, scales:{ x:{ticks:{color:'#fff'}}, y:{ticks:{color:'#fff'}}}}
+  data: {
+    labels: ['T-4', 'T-3', 'T-2', 'T-1', 'Now'],
+    datasets: [{
+      label: 'Glucose (mg/dL)',
+      data: [110, 108, 115, 120, 125],
+      borderColor: '#fff',
+      borderWidth: 2,
+      fill: false,
+      tension: 0.3
+    }]
+  },
+  options: {
+    plugins: { legend: { labels: { color: '#fff' } } },
+    scales: {
+      x: { ticks: { color: '#fff' } },
+      y: { ticks: { color: '#fff' } }
+    }
+  }
 });
 
-/* ---------- Helpers ---------- */
-function statusFor(metric, value){
-  // Return {text, className} depending on ranges
-  switch(metric){
-    case 'glucose': // mg/dL
-      if(value < 70)  return {text:'Low',    cls:'status-bad'};
-      if(value > 140) return {text:'High',   cls:'status-bad'};
-      if(value >= 100) return {text:'Elevated', cls:'status-warn'};
-      return {text:'Normal', cls:'status-ok'};
-    case 'bp': { // systolic only for status quick check
-      if(value < 90)   return {text:'Low', cls:'status-bad'};
-      if(value > 140)  return {text:'High', cls:'status-bad'};
-      if(value >= 120) return {text:'Elevated', cls:'status-warn'};
-      return {text:'Normal', cls:'status-ok'};
-    }
-    case 'temp': // °C
-      if(value < 36)   return {text:'Low', cls:'status-warn'};
-      if(value > 38)   return {text:'Fever', cls:'status-bad'};
-      return {text:'Normal', cls:'status-ok'};
-    case 'heart': // bpm
-      if(value < 60)   return {text:'Low', cls:'status-warn'};
-      if(value > 100)  return {text:'High', cls:'status-bad'};
-      return {text:'Normal', cls:'status-ok'};
-  }
+const metricData = {
+  glucose: [110, 108, 115, 120, 125],
+  bp: [120, 118, 122, 119, 121],
+  temp: [36.5, 36.6, 36.7, 36.8, 36.9],
+  heart: [72, 75, 78, 74, 76]
+};
+
+function updateMiniValues() {
+  document.getElementById('mini-glucose').innerText = metricData.glucose.at(-1);
+  document.getElementById('mini-bp').innerText = metricData.bp.at(-1) + '/80';
+  document.getElementById('mini-temp').innerText = metricData.temp.at(-1) + '°C';
+  document.getElementById('mini-heart').innerText = metricData.heart.at(-1);
 }
 
-function setActiveTab(tab){
-  activeTab = tab;
-  document.querySelectorAll('.tab').forEach(b=>{
-    b.classList.toggle('active', b.dataset.tab===tab);
-  });
-  render();
+function simulateData() {
+  metricData.glucose.push(Math.floor(90 + Math.random() * 40));
+  if (metricData.glucose.length > 5) metricData.glucose.shift();
+
+  metricData.bp.push(Math.floor(110 + Math.random() * 20));
+  if (metricData.bp.length > 5) metricData.bp.shift();
+
+  metricData.temp.push((36 + Math.random()).toFixed(1));
+  if (metricData.temp.length > 5) metricData.temp.shift();
+
+  metricData.heart.push(Math.floor(65 + Math.random() * 20));
+  if (metricData.heart.length > 5) metricData.heart.shift();
+
+  updateMiniValues();
+  updateMainCard();
 }
 
-function render(){
+function updateMainCard() {
   const title = document.getElementById('metricTitle');
-  const valueEl = document.getElementById('metricValue');
-  const statusEl = document.getElementById('metricStatus');
+  const value = document.getElementById('metricValue');
+  const status = document.getElementById('metricStatus');
   const chartTitle = document.getElementById('chartTitle');
 
-  if(activeTab==='glucose'){
-    const v = series.glucose.at(-1);
-    title.textContent = 'Glucose';
-    valueEl.textContent = `${v} mg/dL`;
-    const s = statusFor('glucose', v);
-    statusEl.textContent = s.text; statusEl.className = `metric-status ${s.cls}`;
-    chartTitle.textContent = 'Glucose Trend';
-    chart.data.datasets = [{
-      label:'Glucose (mg/dL)', data: series.glucose, borderColor:'#ffffff', borderWidth:2, tension:.32, fill:false
-    }];
-  }
-  if(activeTab==='bp'){
-    const s = series.bpSys.at(-1), d = series.bpDia.at(-1);
-    title.textContent = 'Blood Pressure';
-    valueEl.textContent = `${s}/${d} mmHg`;
-    const st = statusFor('bp', s);
-    statusEl.textContent = st.text; statusEl.className = `metric-status ${st.cls}`;
-    chartTitle.textContent = 'Blood Pressure Trend';
-    chart.data.datasets = [
-      {label:'Systolic', data:series.bpSys, borderColor:'#ff4b5c', borderWidth:2, tension:.32, fill:false},
-      {label:'Diastolic', data:series.bpDia, borderColor:'#65d2ff', borderWidth:2, tension:.32, fill:false}
-    ];
-  }
-  if(activeTab==='temp'){
-    const t = series.temp.at(-1);
-    title.textContent = 'Body Temperature';
-    valueEl.textContent = `${t.toFixed(1)} °C`;
-    const st = statusFor('temp', t);
-    statusEl.textContent = st.text; statusEl.className = `metric-status ${st.cls}`;
-    chartTitle.textContent = 'Temperature Trend';
-    chart.data.datasets = [{label:'Temperature (°C)', data:series.temp, borderColor:'#ffd166', borderWidth:2, tension:.32, fill:false}];
-  }
-  if(activeTab==='heart'){
-    const h = series.heart.at(-1);
-    title.textContent = 'Heart Rate';
-    valueEl.textContent = `${h} BPM`;
-    const st = statusFor('heart', h);
-    statusEl.textContent = st.text; statusEl.className = `metric-status ${st.cls}`;
-    chartTitle.textContent = 'Heart Rate Trend';
-    chart.data.datasets = [{label:'Heart Rate (BPM)', data:series.heart, borderColor:'#00ffb3', borderWidth:2, tension:.32, fill:false}];
+  let dataset = [];
+  if (currentTab === 'glucose') {
+    title.innerText = 'Glucose';
+    value.innerText = metricData.glucose.at(-1) + ' mg/dL';
+    status.innerText = 'Normal Range';
+    chartTitle.innerText = 'Glucose Trend';
+    dataset = metricData.glucose;
+    chart.data.datasets[0].label = 'Glucose (mg/dL)';
+  } else if (currentTab === 'bp') {
+    title.innerText = 'Blood Pressure';
+    value.innerText = metricData.bp.at(-1) + '/80 mmHg';
+    status.innerText = 'Normal';
+    chartTitle.innerText = 'Blood Pressure Trend';
+    dataset = metricData.bp;
+    chart.data.datasets[0].label = 'BP (Systolic)';
+  } else if (currentTab === 'temp') {
+    title.innerText = 'Temperature';
+    value.innerText = metricData.temp.at(-1) + ' °C';
+    status.innerText = 'Stable';
+    chartTitle.innerText = 'Temperature Trend';
+    dataset = metricData.temp;
+    chart.data.datasets[0].label = 'Temp (°C)';
+  } else if (currentTab === 'heart') {
+    title.innerText = 'Heart Rate';
+    value.innerText = metricData.heart.at(-1) + ' bpm';
+    status.innerText = 'Normal';
+    chartTitle.innerText = 'Heart Rate Trend';
+    dataset = metricData.heart;
+    chart.data.datasets[0].label = 'Heart Rate (bpm)';
   }
 
-  // mini-cards
-  document.getElementById('mini-glucose').textContent = `${series.glucose.at(-1)} mg/dL`;
-  document.getElementById('mini-bp').textContent = `${series.bpSys.at(-1)}/${series.bpDia.at(-1)}`;
-  document.getElementById('mini-temp').textContent = `${series.temp.at(-1).toFixed(1)} °C`;
-  document.getElementById('mini-heart').textContent = `${series.heart.at(-1)} BPM`;
-
+  chart.data.datasets[0].data = dataset;
   chart.update();
 }
 
-/* ---------- Simulated Updates ---------- */
-function tick(){
-  // Glucose 90–160
-  const g = Math.floor(90 + Math.random()*70);
-  series.glucose.push(g); if(series.glucose.length>5) series.glucose.shift();
-
-  // BP
-  const s = Math.floor(108 + Math.random()*32);
-  const d = Math.floor(70 + Math.random()*18);
-  series.bpSys.push(s); if(series.bpSys.length>5) series.bpSys.shift();
-  series.bpDia.push(d); if(series.bpDia.length>5) series.bpDia.shift();
-
-  // Temp 36–38.5
-  const t = +(36 + Math.random()*2.5).toFixed(1);
-  series.temp.push(t); if(series.temp.length>5) series.temp.shift();
-
-  // Heart 55–115
-  const h = Math.floor(55 + Math.random()*60);
-  series.heart.push(h); if(series.heart.length>5) series.heart.shift();
-
-  render();
+function setActiveTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+  updateMainCard();
 }
 
-setActiveTab('glucose');
-setInterval(tick, 4000);
+function logout() {
+  localStorage.removeItem('ht_user');
+  location.href = 'index.html';
+}
+
+// Initial
+updateMiniValues();
+updateMainCard();
+setInterval(simulateData, 5000);

@@ -1,8 +1,6 @@
 function toggleForm(mode){
-  const sign = document.getElementById('signupForm');
-  const log  = document.getElementById('loginForm');
-  if(mode === 'signup'){ sign.style.display='block'; log.style.display='none'; }
-  else { sign.style.display='none'; log.style.display='block'; }
+  document.getElementById('signupForm').style.display = (mode === 'signup') ? 'block' : 'none';
+  document.getElementById('loginForm').style.display = (mode === 'login') ? 'block' : 'none';
 }
 
 function signup(){
@@ -20,7 +18,7 @@ function login(){
   const user = JSON.parse(localStorage.getItem('ht_user') || 'null');
   if(user && user.email === email && user.pass === pass){
     location.href = 'dashboard.html';
-  }else{
+  } else {
     alert('Invalid email or password.');
   }
 }
