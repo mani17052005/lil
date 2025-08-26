@@ -1,38 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Health Tracker – Sign Up / Login</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health App | Login</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="auth-wrapper">
     <div class="auth-box">
-      <h1>Health Tracker</h1>
-
-      <div id="signupForm">
-        <h2>Create Account</h2>
-        <input type="email" id="signupEmail" placeholder="Email" required/>
-        <input type="password" id="signupPassword" placeholder="Password" required/>
+      <h1>Welcome</h1>
+      <div id="signup-box">
+        <h2>Sign Up</h2>
+        <input type="email" id="signup-email" placeholder="Email">
+        <input type="password" id="signup-password" placeholder="Password">
         <button class="btn-primary" onclick="signup()">Sign Up</button>
-        <p>Already have an account?
-          <a href="#" onclick="toggleForm('login')">Login</a>
-        </p>
+        <p>Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
       </div>
-
-      <div id="loginForm" style="display:none;">
-        <h2>Welcome Back</h2>
-        <input type="email" id="loginEmail" placeholder="Email" required/>
-        <input type="password" id="loginPassword" placeholder="Password" required/>
+      <div id="login-box" style="display:none;">
+        <h2>Login</h2>
+        <input type="email" id="login-email" placeholder="Email">
+        <input type="password" id="login-password" placeholder="Password">
         <button class="btn-primary" onclick="login()">Login</button>
-        <p>No account?
-          <a href="#" onclick="toggleForm('signup')">Create one</a>
-        </p>
+        <p>No account? <a href="#" onclick="toggleForms()">Sign Up</a></p>
       </div>
     </div>
   </div>
-
   <script src="app.js"></script>
 </body>
 </html>
