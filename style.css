@@ -1,125 +1,95 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Arial', sans-serif;
-}
-
 body {
+  margin: 0;
+  font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   color: #fff;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
 }
 
-/* Auth Container */
 .auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  max-width: 400px;
 }
 
 .auth-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
+  background: rgba(255,255,255,0.1);
   padding: 2rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
   text-align: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-.auth-card h1 {
-  margin-bottom: 1rem;
-  font-size: 1.8rem;
-  color: #fff;
+  width: 350px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
 .auth-card input {
-  width: 100%;
-  padding: 0.8rem;
-  margin: 0.5rem 0;
-  border: none;
+  width: 90%;
+  padding: 12px;
+  margin: 10px 0;
   border-radius: 8px;
+  border: none;
 }
 
 .auth-card button {
   width: 100%;
-  padding: 0.8rem;
+  padding: 12px;
   background: #2575fc;
-  color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.auth-card p {
-  margin-top: 1rem;
-}
-
-.auth-card a {
   color: #fff;
-  text-decoration: underline;
-}
-
-/* Dashboard */
-.dashboard-header {
-  width: 100%;
-  background: #2575fc;
-  padding: 1rem;
-  text-align: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
-.logout-btn {
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  background: red;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  font-size: 16px;
   cursor: pointer;
 }
 
 .dashboard-container {
+  width: 90%;
+  max-width: 1000px;
   margin-top: 80px;
-  padding: 1rem;
-  width: 100%;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-}
-
-.card {
-  background: white;
-  color: #2575fc;
-  padding: 1rem;
-  border-radius: 10px;
+.status-card {
+  background: rgba(255,255,255,0.2);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
   text-align: center;
+}
+
+.value {
+  font-size: 2rem;
   font-weight: bold;
+}
+
+.alert-text {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.chart-section {
+  background: rgba(255,255,255,0.2);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.sensor-info {
+  background: rgba(255,255,255,0.2);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.logout-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
   cursor: pointer;
-  transition: transform 0.3s;
-}
-
-.card:hover {
-  transform: scale(1.05);
-}
-
-.feature-section {
-  margin-top: 2rem;
-  background: white;
-  color: #222;
-  padding: 1rem;
-  border-radius: 10px;
 }
