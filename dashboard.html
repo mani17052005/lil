@@ -3,28 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Health Monitor</title>
+  <title>Dashboard - Next-Gen Glucose Tracker</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header class="dashboard-header">
-    <h1>Welcome to Health Monitor</h1>
+  <header>
+    <h1>Welcome to Your Glucose Dashboard</h1>
     <button onclick="logout()" class="logout-btn">Logout</button>
   </header>
 
   <main class="dashboard-container">
-    <div class="options-grid">
-      <div class="card" onclick="showFeature('glucose')">Glucose Monitor</div>
-      <div class="card" onclick="showFeature('bp')">Blood Pressure</div>
-      <div class="card" onclick="showFeature('heart')">Heart Rate</div>
-      <div class="card" onclick="showFeature('temp')">Body Temperature</div>
+    <div class="status-card">
+      <h2>Current Glucose Level</h2>
+      <div class="value" id="glucoseValue">-- mg/dL</div>
+      <p id="alertMessage" class="alert-text">Waiting for data...</p>
     </div>
 
-    <section id="featureSection" class="feature-section">
-      <h2 id="featureTitle">Select a feature above</h2>
-      <canvas id="featureChart"></canvas>
-    </section>
+    <div class="chart-section">
+      <h3>Real-Time Glucose Monitoring</h3>
+      <canvas id="glucoseChart"></canvas>
+    </div>
+
+    <div class="sensor-info">
+      <h3>Sensor Status</h3>
+      <p>Pressure Sensor: Active</p>
+      <p>Temperature Sensor: Active</p>
+      <p>Electrochemical Sensor: Active</p>
+    </div>
   </main>
 
   <script src="dashboard.js"></script>
