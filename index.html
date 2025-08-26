@@ -3,26 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Monitor - Login</title>
+  <title>Next-Gen Glucose Tracker</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="auth-container">
     <div class="auth-card">
-      <h1>Health Monitor</h1>
+      <h1>Next-Gen Glucose Tracker</h1>
+
       <div id="signupForm">
         <h2>Create Account</h2>
-        <input type="email" id="signupEmail" placeholder="Email" required>
-        <input type="password" id="signupPassword" placeholder="Password" required>
+        <input type="email" id="signupEmail" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password">
         <button onclick="signup()">Sign Up</button>
         <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
       </div>
+
       <div id="loginForm" style="display:none;">
         <h2>Login</h2>
-        <input type="email" id="loginEmail" placeholder="Email" required>
-        <input type="password" id="loginPassword" placeholder="Password" required>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
         <button onclick="login()">Login</button>
-        <p>Don’t have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a></p>
+        <p>No account? <a href="#" onclick="toggleForm('signup')">Sign Up</a></p>
       </div>
     </div>
   </div>
