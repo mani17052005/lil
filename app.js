@@ -1,7 +1,8 @@
-// --------- Utilities ---------
-const USERS_KEY = 'ht_users';        // array of {email, passHash, createdAt}
-const SESSION_KEY = 'ht_session';    // {email, ts}
+// --------- Keys ---------
+const USERS_KEY = 'ht_users';      // array of {email, passHash, createdAt, profile:{name,age,gender,series:{...}}}
+const SESSION_KEY = 'ht_session';  // {email, ts, remember}
 
+// --------- Helpers ---------
 const $ = (id) => document.getElementById(id);
 
 function toggleForm(mode){
@@ -11,7 +12,7 @@ function toggleForm(mode){
   else { sign.style.display='block'; log.style.display='none'; }
 }
 
-// SHA-256 hash for password (frontend-only)
+// SHA-256 hash for password (frontend-only; for demo)
 async function sha256(text){
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -26,23 +27,25 @@ function saveUsers(users){
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 function setSession(email, remember=true){
-  // localStorage persists anyway, checkbox just for UI parity
   localStorage.setItem(SESSION_KEY, JSON.stringify({email, ts: Date.now(), remember}));
 }
 function getSession(){
   try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
   catch { return null; }
 }
-function clearSession(){
-  localStorage.removeItem(SESSION_KEY);
-}
 
 // --------- Sign Up ---------
 async function signup(){
-  const email = $('signupEmail').value.trim().toLowerCase();
+  const name   = $('signupName').value.trim();
+  const age    = $('signupAge').value.trim();
+  const gender = $('signupGender').value;
+  const email  = $('signupEmail').value.trim().toLowerCase();
   const password = $('signupPassword').value;
 
-  if(!email || !password) return alert('Please fill all fields.');
+  if(!name || !age || !gender || !email || !password){
+    return alert('Please fill all fields.');
+  }
+
   const users = loadUsers();
   if(users.some(u => u.email === email)){
     alert('An account with this email already exists. Please login.');
@@ -50,10 +53,25 @@ async function signup(){
     $('loginEmail').value = email;
     return;
   }
+
   const passHash = await sha256(password);
-  users.push({email, passHash, createdAt: new Date().toISOString()});
+
+  // initial per-user data
+  const profile = {
+    name, age, gender,
+    series: {
+      glucose: [110, 118, 122, 130, 126],
+      bpSys:   [118, 122, 126, 124, 120],
+      bpDia:   [78,  80,  82,  81,  79 ],
+      temp:    [36.6,36.8,37.0,36.7,36.8],
+      heart:   [72,  78,  80,  76,  79 ]
+    }
+  };
+
+  users.push({ email, passHash, createdAt: new Date().toISOString(), profile });
   saveUsers(users);
-  alert('Account created! You can login now.');
+
+  alert('Account created! You can log in now.');
   toggleForm('login');
   $('loginEmail').value = email;
   $('loginPassword').value = '';
@@ -78,21 +96,17 @@ async function login(){
   location.href = 'dashboard.html';
 }
 
-// --------- Auto-redirect if session exists ---------
+// --------- Init ---------
 (function init(){
-  // If already logged in, go straight to dashboard
   const session = getSession();
   if(session && session.email){
-    // stay on login page if user explicitly logged out before? we just go to dashboard.
-    // Uncomment the next line if you want to stay: return;
-    // Otherwise:
     location.href = 'dashboard.html';
     return;
   }
 
-  // Wire up buttons/links
+  // Wire up
   $('signupBtn').onclick = signup;
   $('loginBtn').onclick = login;
-  $('goLogin').onclick = (e)=>{ e.preventDefault(); toggleForm('login'); };
+  $('goLogin').onclick  = (e)=>{ e.preventDefault(); toggleForm('login'); };
   $('goSignup').onclick = (e)=>{ e.preventDefault(); toggleForm('signup'); };
 })();
