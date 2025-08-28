@@ -1,52 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Health Tracker - Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Dashboard</title>
+  <link rel="stylesheet" href="styles.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header>
-    <h1 id="welcome">Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
+  <header class="dash-header">
+    <!-- Profile box (top-left) -->
+    <div class="profile-box" id="profileBox">
+      <div id="profileName">—</div>
+      <div id="profileInfo">Age — | Gender —</div>
+      <button id="editProfileBtn" class="edit-btn">✏️ Edit</button>
+    </div>
+
+    <h1 id="welcome">Your Health Dashboard</h1>
+
+    <div class="header-actions">
+      <button class="mode-toggle" id="modeBtn" title="Toggle dark/light">🌙</button>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
   </header>
 
-  <!-- Profile -->
-  <aside class="profile-card">
-    <h2>Profile</h2>
-    <p><b>Name:</b> <span id="profName"></span></p>
-    <p><b>Age:</b> <span id="profAge"></span></p>
-    <p><b>Gender:</b> <span id="profGender"></span></p>
-    <button id="editProfileBtn">Edit Profile</button>
-
-    <form id="editProfileForm" class="hidden">
-      <input id="editName" placeholder="Name" required>
-      <input id="editAge" type="number" placeholder="Age" required>
-      <select id="editGender" required>
-        <option value="">Select Gender</option>
+  <!-- Profile modal -->
+  <div class="modal" id="profileModal">
+    <div class="modal-content glass-card">
+      <h2>Edit Profile</h2>
+      <input type="text" id="profileNameInput" placeholder="Full name"/>
+      <input type="number" id="profileAgeInput" placeholder="Age" min="1" max="120"/>
+      <select id="profileGenderInput">
+        <option value="">Select gender</option>
         <option>Male</option>
         <option>Female</option>
         <option>Other</option>
       </select>
-      <button type="submit">Save</button>
-      <button type="button" id="cancelEdit">Cancel</button>
-    </form>
-  </aside>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn-primary" id="saveProfileBtn">Save</button>
+        <button class="logout-btn" id="closeProfileBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Tabs -->
   <nav class="tabs">
-    <button data-tab="glucose">Glucose</button>
-    <button data-tab="bp">Blood Pressure</button>
-    <button data-tab="temp">Temperature</button>
-    <button data-tab="heart">Heart Rate</button>
+    <button class="tab active" data-tab="glucose" onclick="setActiveTab('glucose')">🩸 Glucose</button>
+    <button class="tab" data-tab="bp" onclick="setActiveTab('bp')">🩺 Blood Pressure</button>
+    <button class="tab" data-tab="temp" onclick="setActiveTab('temp')">🌡️ Temperature</button>
+    <button class="tab" data-tab="heart" onclick="setActiveTab('heart')">❤️ Heart Rate</button>
   </nav>
 
-  <!-- Metrics -->
-  <section class="metrics">
-    <div id="metricInfo"></div>
-    <canvas id="chart"></canvas>
-  </section>
+  <main class="dash-main">
+    <section class="glass-card metric-card">
+      <h2 id="metricTitle">Glucose</h2>
+      <div class="metric-value" id="metricValue">--</div>
+      <div class="metric-status" id="metricStatus">Waiting…</div>
+    </section>
+
+    <section class="glass-card chart-card">
+      <h3 id="chartTitle">Glucose Trend</h3>
+      <canvas id="metricChart"></canvas>
+    </section>
+
+    <section class="mini-grid">
+      <div class="mini glass-card"><div class="mini-title">Glucose</div><div class="mini-value" id="mini-glucose">--</div></div>
+      <div class="mini glass-card"><div class="mini-title">BP</div><div class="mini-value" id="mini-bp">--/--</div></div>
+      <div class="mini glass-card"><div class="mini-title">Temp</div><div class="mini-value" id="mini-temp">--</div></div>
+      <div class="mini glass-card"><div class="mini-title">Heart</div><div class="mini-value" id="mini-heart">--</div></div>
+    </section>
+
+    <section id="suggestionBox" class="ai-suggestion glass-card">
+      <h3>AI Suggestion</h3>
+      <p>Tips will appear here based on your current metric.</p>
+    </section>
+  </main>
 
   <script src="dashboard.js"></script>
 </body>
