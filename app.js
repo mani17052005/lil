@@ -1,17 +1,15 @@
 // --------- Utilities ---------
-const USERS_KEY = 'ht_users';        // array of {email, passHash, createdAt, profile}
-const SESSION_KEY = 'ht_session';    // {email, ts, remember}
+const USERS_KEY = 'ht_users';
+const SESSION_KEY = 'ht_session';
 
 const $ = (id) => document.getElementById(id);
 
 function toggleForm(mode){
-  const sign = $('signupForm');
-  const log  = $('loginForm');
-  if(mode === 'login'){ sign.style.display='none'; log.style.display='block'; }
-  else { sign.style.display='block'; log.style.display='none'; }
+  $('signupForm').style.display = mode === 'login' ? 'none' : 'block';
+  $('loginForm').style.display  = mode === 'login' ? 'block' : 'none';
 }
 
-// SHA-256 hash for password (frontend-only demo)
+// SHA-256 password hashing
 async function sha256(text){
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -32,57 +30,34 @@ function getSession(){
   try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
   catch { return null; }
 }
-function clearSession(){
-  localStorage.removeItem(SESSION_KEY);
-}
+function clearSession(){ localStorage.removeItem(SESSION_KEY); }
 
 // --------- Sign Up ---------
 async function signup(){
-  const name   = $('signupName').value.trim();
-  const age    = $('signupAge').value.trim();
-  const gender = $('signupGender').value;
-  const email  = $('signupEmail').value.trim().toLowerCase();
+  const email = $('signupEmail').value.trim().toLowerCase();
   const password = $('signupPassword').value;
 
-  if(!email || !password) return alert('Please fill email and password.');
+  if(!email || !password) return alert('Please fill all fields.');
   const users = loadUsers();
   if(users.some(u => u.email === email)){
-    alert('An account with this email already exists. Please login.');
+    alert('Account already exists. Please login.');
     toggleForm('login');
     $('loginEmail').value = email;
     return;
   }
   const passHash = await sha256(password);
-
-  // create profile with initial per-user series
-  const profile = {
-    name: name || '',
-    age: age || '',
-    gender: gender || '',
-    series: {
-      glucose: [110, 118, 122, 130, 126],
-      bpSys:   [118, 122, 126, 124, 120],
-      bpDia:   [78, 80, 82, 81, 79],
-      temp:    [36.6, 36.8, 37.0, 36.7, 36.8],
-      heart:   [72, 78, 80, 76, 79]
-    }
-  };
-
-  users.push({email, passHash, createdAt: new Date().toISOString(), profile});
+  users.push({email, passHash, createdAt: new Date().toISOString()});
   saveUsers(users);
   alert('Account created! You can login now.');
   toggleForm('login');
   $('loginEmail').value = email;
-  $('loginPassword').value = '';
 }
 
 // --------- Login ---------
 async function login(){
   const email = $('loginEmail').value.trim().toLowerCase();
   const password = $('loginPassword').value;
-  const remember = $('rememberMe').checked;
-
-  if(!email || !password) return alert('Please enter email and password.');
+  if(!email || !password) return alert('Enter email and password.');
 
   const users = loadUsers();
   const user = users.find(u => u.email === email);
@@ -91,20 +66,17 @@ async function login(){
   const passHash = await sha256(password);
   if(passHash !== user.passHash) return alert('Incorrect password.');
 
-  setSession(email, remember);
+  setSession(email, $('rememberMe').checked);
   location.href = 'dashboard.html';
 }
 
-// --------- Auto-redirect if session exists ---------
+// --------- Init ---------
 (function init(){
   const session = getSession();
-  if(session && session.email){
-    location.href = 'dashboard.html';
-    return;
-  }
+  if(session && session.email) { location.href = 'dashboard.html'; return; }
 
   $('signupBtn').onclick = signup;
   $('loginBtn').onclick = login;
-  $('goLogin').onclick = (e)=>{ e.preventDefault(); toggleForm('login'); };
-  $('goSignup').onclick = (e)=>{ e.preventDefault(); toggleForm('signup'); };
+  $('goLogin').onclick = e => { e.preventDefault(); toggleForm('login'); };
+  $('goSignup').onclick = e => { e.preventDefault(); toggleForm('signup'); };
 })();
