@@ -9,39 +9,12 @@
 </head>
 <body>
   <header class="dash-header">
-    <!-- Profile box (top-left) -->
-    <div class="profile-box" id="profileBox">
-      <div id="profileName">—</div>
-      <div id="profileInfo">Age — | Gender —</div>
-      <button id="editProfileBtn" class="edit-btn">✏️ Edit</button>
-    </div>
-
     <h1 id="welcome">Your Health Dashboard</h1>
-
     <div class="header-actions">
       <button class="mode-toggle" id="modeBtn" title="Toggle dark/light">🌙</button>
       <button class="logout-btn" id="logoutBtn">Logout</button>
     </div>
   </header>
-
-  <!-- Profile modal -->
-  <div class="modal" id="profileModal">
-    <div class="modal-content glass-card">
-      <h2>Edit Profile</h2>
-      <input type="text" id="profileNameInput" placeholder="Full name"/>
-      <input type="number" id="profileAgeInput" placeholder="Age" min="1" max="120"/>
-      <select id="profileGenderInput">
-        <option value="">Select gender</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-      </select>
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-        <button class="btn-primary" id="saveProfileBtn">Save</button>
-        <button class="logout-btn" id="closeProfileBtn">Cancel</button>
-      </div>
-    </div>
-  </div>
 
   <nav class="tabs">
     <button class="tab active" data-tab="glucose" onclick="setActiveTab('glucose')">🩸 Glucose</button>
@@ -69,11 +42,18 @@
       <div class="mini glass-card"><div class="mini-title">Heart</div><div class="mini-value" id="mini-heart">--</div></div>
     </section>
 
-    <section id="suggestionBox" class="ai-suggestion glass-card">
-      <h3>AI Suggestion</h3>
-      <p>Tips will appear here based on your current metric.</p>
+    <!-- AI Suggestions -->
+    <section class="glass-card suggestions-card">
+      <h3>AI Health Assistant</h3>
+      <ul id="suggestionList"></ul>
     </section>
   </main>
+
+  <!-- Toast container -->
+  <div id="toastContainer"></div>
+
+  <!-- Alert sound -->
+  <audio id="alertSound" src="alert.mp3" preload="auto"></audio>
 
   <script src="dashboard.js"></script>
 </body>
