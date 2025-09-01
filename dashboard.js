@@ -2,16 +2,22 @@
  *  Health Tracker — dashboard.js
  *  =========================== */
 
+/* ---------- Keys ---------- */
+const SESSION_KEY     = 'ht_session';
+const USERS_DATA_KEY  = 'ht_user_data';
+const PROFILE_KEY     = 'ht_user_profiles';
+
 /* ---------- Session / Auth ---------- */
-const SESSION_KEY = 'ht_session';
 const getSession = () => { try { return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); } catch { return null; } };
 const logout = () => { localStorage.removeItem(SESSION_KEY); location.href='index.html'; };
 
 const session = getSession();
 if(!session || !session.email){ location.href = 'index.html'; }
 
-/* ---------- UI Wiring ---------- */
+/* ---------- DOM helpers ---------- */
 const $ = (id) => document.getElementById(id);
+
+/* ---------- UI Wiring ---------- */
 $('welcome').textContent = `Your Health Dashboard — ${session.email}`;
 $('logoutBtn').onclick = logout;
 $('modeBtn').onclick = () => {
@@ -19,16 +25,83 @@ $('modeBtn').onclick = () => {
   if (window.metricChart) window.metricChart.update();
 };
 
-/* ---------- Per-user Storage ---------- */
-const USERS_DATA_KEY = 'ht_user_data';
-function loadUserBlob(){
-  try { return JSON.parse(localStorage.getItem(USERS_DATA_KEY) || '{}'); }
-  catch { return {}; }
+/* ---------- Profiles ---------- */
+function loadProfiles(){ try{ return JSON.parse(localStorage.getItem(PROFILE_KEY)||'{}'); }catch{ return {}; } }
+function saveProfiles(blob){ localStorage.setItem(PROFILE_KEY, JSON.stringify(blob)); }
+function getProfile(email){
+  const all = loadProfiles();
+  if(!all[email]){
+    // safety default
+    all[email] = { email, name: email.split('@')[0], avatar:'😀', units:'mgdl', theme:'dark', goals:{dailyReadings:10} };
+    saveProfiles(all);
+  }
+  return all[email];
 }
+function putProfile(email, prof){
+  const all = loadProfiles();
+  all[email] = { ...all[email], ...prof, updatedAt: new Date().toISOString() };
+  saveProfiles(all);
+}
+let profile = getProfile(session.email);
+
+// apply theme from profile
+if (profile.theme === 'light') document.body.classList.add('light');
+
+// top-left chip
+$('profileAvatar').textContent = profile.avatar || '😀';
+$('profileName').textContent   = profile.name || session.email.split('@')[0];
+
+// drawer bindings
+const drawer = $('profileDrawer');
+$('profileBtn').onclick    = () => drawer.classList.add('open');
+$('closeProfile').onclick  = () => drawer.classList.remove('open');
+
+// populate profile form
+$('p_name').value  = profile.name || '';
+$('p_avatar').value= profile.avatar || '😀';
+$('p_units').value = profile.units || 'mgdl';
+$('p_theme').value = profile.theme || 'dark';
+$('p_goal_daily_readings').value = (profile.goals?.dailyReadings ?? 10);
+
+// save profile
+$('saveProfile').onclick = ()=>{
+  const updated = {
+    name: $('p_name').value.trim() || session.email.split('@')[0],
+    avatar: $('p_avatar').value.trim() || '😀',
+    units: $('p_units').value,
+    theme: $('p_theme').value,
+    goals: { dailyReadings: Math.max(1, +$('p_goal_daily_readings').value || 10) }
+  };
+  putProfile(session.email, updated);
+  profile = getProfile(session.email);
+  $('profileAvatar').textContent = profile.avatar;
+  $('profileName').textContent   = profile.name;
+  if(profile.theme === 'light') document.body.classList.add('light'); else document.body.classList.remove('light');
+  alert('Profile saved.');
+};
+
+// reset goals
+$('resetGoals').onclick = ()=>{
+  putProfile(session.email, { goals:{ dailyReadings: 10 } });
+  profile = getProfile(session.email);
+  $('p_goal_daily_readings').value = profile.goals.dailyReadings;
+};
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    btn.classList.toggle('open');
+    const ans = btn.nextElementSibling;
+    ans.style.maxHeight = ans.style.maxHeight ? null : ans.scrollHeight + "px";
+  });
+});
+
+/* ---------- Per-user Data ---------- */
+function loadUserBlob(){ try { return JSON.parse(localStorage.getItem(USERS_DATA_KEY) || '{}'); } catch { return {}; } }
 function saveUserBlob(blob){ localStorage.setItem(USERS_DATA_KEY, JSON.stringify(blob)); }
 function loadUserData(email){
   const blob = loadUserBlob();
-  return blob[email] || { readings: [], suggestions: [] };
+  return blob[email] || { readings: [] };
 }
 function saveUserData(email, data){
   const blob = loadUserBlob();
@@ -37,18 +110,49 @@ function saveUserData(email, data){
 }
 let userData = loadUserData(session.email);
 
+/* ---------- Streaks & Achievements ---------- */
+function computeStreakDays(readings){
+  if (!readings.length) return 0;
+  // build a Set of yyyy-mm-dd that have at least one reading
+  const days = new Set(readings.map(r => new Date(r.time).toISOString().slice(0,10)));
+  let d = new Date(); d.setHours(0,0,0,0);
+  let streak = 0;
+  while(true){
+    const key = new Date(d.getTime() - streak*86400000).toISOString().slice(0,10);
+    if (days.has(key)) streak++;
+    else break;
+  }
+  return streak;
+}
+function calcAchievements(readings, streak){
+  const list = [];
+  if (streak >= 3) list.push('🔥 3-day streak');
+  if (streak >= 7) list.push('🏆 7-day streak');
+  if (readings.length >= 100) list.push('📈 100+ total readings');
+  // Stable glucose last 10 points (within 20 mg/dL)
+  if (readings.length >= 10){
+    const last10 = readings.slice(-10).map(r=>r.glucose);
+    const spread = Math.max(...last10) - Math.min(...last10);
+    if (spread <= 20) list.push('🛡️ Stable glucose (last 10)');
+  }
+  return list;
+}
+function refreshProfileStats(){
+  const total = userData.readings.length;
+  const streak = computeStreakDays(userData.readings);
+  $('streakDays').textContent = `${streak} day${streak===1?'':'s'}`;
+  $('totalReadings').textContent = total;
+  const ach = calcAchievements(userData.readings, streak);
+  const ul = $('achList');
+  ul.innerHTML = ach.length ? ach.map(a=>`<li>${a}</li>`).join('') : '<li>—</li>';
+}
+refreshProfileStats();
+
 /* ---------- Live Series & Labels ---------- */
 let labels = []; // time labels like "10:42:01 AM"
 const MAX_POINTS = 30; // chart window
 
-let series = {
-  glucose: [],
-  bpSys:   [],
-  bpDia:   [],
-  temp:    [],
-  heart:   []
-};
-
+let series = { glucose: [], bpSys: [], bpDia: [], temp: [], heart: [] };
 let activeTab = 'glucose';
 
 /* ---------- Chart ---------- */
@@ -99,140 +203,28 @@ function setActiveTab(tab){
   activeTab = tab;
   document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab===tab));
 
-  // Optional sections (render only if present in DOM)
   const history = $('historySection');
-  const doctor  = $('doctorSection');
   if (history) history.style.display = (tab === 'history') ? 'block' : 'none';
-  if (doctor)  doctor.style.display  = (tab === 'doctor')  ? 'block' : 'none';
 
-  if (tab === 'history' && history) renderHistory();
-  else if (tab !== 'doctor') render();
+  if (tab === 'history') renderHistory();
+  else render();
 }
 window.setActiveTab = setActiveTab;
 
-/* ---------- AI Suggestions (Trend-Aware) ---------- */
-function generateSuggestions(){
-  const latest = {
-    glucose: series.glucose.at(-1),
-    bpSys:   series.bpSys.at(-1),
-    bpDia:   series.bpDia.at(-1),
-    temp:    series.temp.at(-1),
-    heart:   series.heart.at(-1)
-  };
-
-  let messages = [];
-
-  // Glucose
-  if(latest.glucose > 140){
-    messages.push("⚠️ High glucose: hydrate, light walk, monitor intake.");
-    if(series.glucose.slice(-3).every(v => v > 140)){
-      messages.push("🚨 Persistent high glucose! Schedule a check-up soon.");
-    }
-  } else if(latest.glucose < 70){
-    messages.push("⚠️ Low glucose: take fast-acting carbs (juice/tablets).");
-  } else {
-    messages.push("✅ Glucose within target range.");
-  }
-
-  // BP
-  if(latest.bpSys > 140 || latest.bpDia > 90){
-    messages.push("⚠️ High BP: reduce salt, relax breathing, manage stress.");
-    if(series.bpSys.slice(-3).every(v => v > 140)){
-      messages.push("🚨 Persistent high BP! Consult your doctor.");
-    }
-  } else if(latest.bpSys < 90 || latest.bpDia < 60){
-    messages.push("⚠️ Low BP: hydrate, sit/lie down if dizzy.");
-  } else {
-    messages.push("✅ Blood pressure looks good.");
-  }
-
-  // Temperature
-  if(latest.temp > 38){
-    messages.push("🤒 Fever: rest, hydrate, monitor symptoms.");
-    if(series.temp.slice(-3).every(v => v > 38)){
-      messages.push("🚨 Fever persisting across readings. Seek medical advice.");
-    }
-  } else if(latest.temp < 36){
-    messages.push("⚠️ Low temperature: keep warm and recheck.");
-  } else {
-    messages.push("✅ Temperature is normal.");
-  }
-
-  // Heart rate
-  if(latest.heart > 100){
-    messages.push("⚠️ High heart rate: rest, avoid caffeine, slow breathing.");
-    if(series.heart.slice(-3).every(v => v > 100)){
-      messages.push("🚨 Sustained high heart rate. Please consult a clinician.");
-    }
-  } else if(latest.heart < 60){
-    messages.push("⚠️ Low heart rate: if dizzy/weak, contact your doctor.");
-  } else {
-    messages.push("✅ Heart rate in a healthy range.");
-  }
-
-  // Rapid glucose swing
-  if(series.glucose.length > 1 && Math.abs(series.glucose.at(-1) - series.glucose.at(-2)) > 40){
-    messages.push("⚠️ Rapid glucose fluctuation detected. Review recent meals/insulin.");
-  }
-
-  // All good
-  const allGood =
-    latest.glucose >= 90 && latest.glucose <= 120 &&
-    latest.bpSys   >= 100 && latest.bpSys   <= 130 &&
-    latest.temp    >= 36  && latest.temp    <= 37.5 &&
-    latest.heart   >= 60  && latest.heart   <= 90;
-  if(allGood) messages.push("✅ All readings stable—great job maintaining your routine!");
-
-  return messages;
-}
-
-/* ---------- Suggestions Panel + Toasts ---------- */
+/* ---------- Toasts ---------- */
 function showToast(message, type="normal") {
-  const container = $('toastContainer');
-  if (!container) return;
-
+  const container = $('toastContainer'); if (!container) return;
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
   toast.textContent = message;
   container.appendChild(toast);
-
-  // Sound for urgent
   if(type === "urgent"){
-    const sound = $('alertSound');
-    if (sound) {
-      sound.currentTime = 0;
-      sound.play().catch(()=>{ /* autoplay may be blocked */ });
-    }
+    const sound = $('alertSound'); if (sound) { sound.currentTime = 0; sound.play().catch(()=>{}); }
   }
-
   setTimeout(() => {
     toast.classList.add("fade-out");
     setTimeout(() => toast.remove(), 500);
-  }, 4000);
-}
-
-function updateSuggestionsPanel(messages){
-  const ul = $('suggestionList');
-  if(!ul) return;
-
-  ul.innerHTML = "";
-  messages.slice(-3).forEach(msg => {
-    const li = document.createElement("li");
-    li.textContent = msg;
-
-    if (msg.includes("🚨")) {
-      li.className = "sugg-urgent";
-      showToast(msg, "urgent");
-    } else if (msg.includes("⚠️") || msg.includes("Fever")) {
-      li.className = "sugg-warning";
-    } else if (msg.includes("✅")) {
-      li.className = "sugg-good";
-    } else {
-      li.className = "sugg-normal";
-    }
-
-    ul.appendChild(li);
-  });
+  }, 3000);
 }
 
 /* ---------- Render (cards + chart) ---------- */
@@ -242,16 +234,20 @@ function render(){
   const statusEl = $('metricStatus');
   const chartTitle = $('chartTitle');
 
+  // convert glucose if needed for display
+  const convG = (v) => profile.units === 'mmol' ? (v/18).toFixed(1) : v;
+  const gLabel = profile.units === 'mmol' ? 'mmol/L' : 'mg/dL';
+
   if(activeTab==='glucose'){
     const v = series.glucose.at(-1) ?? 0;
     title.textContent = 'Glucose';
-    valueEl.textContent = `${v} mg/dL`;
+    valueEl.textContent = `${convG(v)} ${gLabel}`;
     const s = statusFor('glucose', v);
     statusEl.textContent = s.text; statusEl.className = `metric-status ${s.cls}`;
     chartTitle.textContent = 'Glucose Trend';
     metricChart.data.labels = labels;
     metricChart.data.datasets = [
-      { label:'Glucose (mg/dL)', data:series.glucose, borderColor:'#ffffff', borderWidth:2, tension:.32, fill:false }
+      { label:`Glucose (${gLabel})`, data: series.glucose.map(x => profile.units==='mmol' ? (x/18).toFixed(1) : x), borderColor:'#ffffff', borderWidth:2, tension:.32, fill:false }
     ];
   }
   if(activeTab==='bp'){
@@ -295,7 +291,7 @@ function render(){
   // mini-cards
   const gLast = series.glucose.at(-1), sLast = series.bpSys.at(-1), dLast = series.bpDia.at(-1),
         tLast = series.temp.at(-1),     hLast = series.heart.at(-1);
-  $('mini-glucose').textContent = gLast != null ? `${gLast} mg/dL` : '--';
+  $('mini-glucose').textContent = gLast != null ? `${convG(gLast)} ${gLabel}` : '--';
   $('mini-bp').textContent      = (sLast != null && dLast != null) ? `${sLast}/${dLast}` : '--/--';
   $('mini-temp').textContent    = tLast != null ? `${(+tLast).toFixed(1)} °C` : '--';
   $('mini-heart').textContent   = hLast != null ? `${hLast} BPM` : '--';
@@ -304,47 +300,62 @@ function render(){
   metricChart.update();
 }
 
-/* ---------- History (optional section) ---------- */
+/* ---------- History (no AI suggestions) ---------- */
+// small helper to compute trend text for a tiny window (last 3 deltas)
+function trendOf(arr){
+  if (arr.length < 3) return '—';
+  const last3 = arr.slice(-3);
+  const d1 = last3[1] - last3[0];
+  const d2 = last3[2] - last3[1];
+  const slope = (d1 + d2)/2;
+  if (slope > 1.5) return 'up';
+  if (slope < -1.5) return 'down';
+  return 'flat';
+}
+function addHistItem(ul, time, value, unit, trend){
+  const li = document.createElement('li');
+  const badge =
+    trend === 'up' ? '<span class="trend up">↑</span>' :
+    trend === 'down' ? '<span class="trend down">↓</span>' :
+    '<span class="trend flat">→</span>';
+  li.innerHTML = `<span class="time">${new Date(time).toLocaleString()}</span>
+                  <span class="val">${value} ${unit}</span> ${badge}`;
+  ul.appendChild(li);
+}
 function renderHistory(){
-  const log = $('historyLog');
-  if(!log) return;
+  const hG = $('hist-glucose'), hB = $('hist-bp'), hT = $('hist-temp'), hH = $('hist-heart');
+  hG.innerHTML = ''; hB.innerHTML = ''; hT.innerHTML = ''; hH.innerHTML = '';
 
-  log.innerHTML = "";
-  if(!userData.readings.length){
-    log.innerHTML = "<p>No history recorded yet.</p>";
-    return;
-  }
-  const recent = userData.readings.slice(-50).toReversed();
-  recent.forEach(r => {
-    const suggObj = userData.suggestions.find(s => s.time >= r.time);
-    const div = document.createElement('div');
-    div.className = "history-item";
-    div.innerHTML = `
-      <div class="history-time">📅 ${new Date(r.time).toLocaleString()}</div>
-      <div class="history-data">
-        Glucose: ${r.glucose} mg/dL | BP: ${r.bpSys}/${r.bpDia} mmHg | Temp: ${r.temp} °C | Heart: ${r.heart} BPM
-      </div>
-      <div class="history-sugg">
-        <strong>AI Suggestion:</strong>
-        <ul>${suggObj ? suggObj.text.map(t=>`<li>${t}</li>`).join("") : "<li>--</li>"}</ul>
-      </div>
-    `;
-    log.appendChild(div);
+  const gUnit = profile.units === 'mmol' ? 'mmol/L' : 'mg/dL';
+
+  const recent = userData.readings.slice(-150); // cap to keep DOM light
+  recent.forEach((r, idx) => {
+    // compute rolling trend using the same in-memory series (when on page) OR rebuild quickly
+    const upTo = userData.readings.slice(0, userData.readings.indexOf(r)+1);
+    const gArr = upTo.map(x=>x.glucose);
+    const sArr = upTo.map(x=>x.bpSys);
+    const dArr = upTo.map(x=>x.bpDia);
+    const tArr = upTo.map(x=>x.temp);
+    const hArr = upTo.map(x=>x.heart);
+
+    const gVal = profile.units==='mmol' ? (r.glucose/18).toFixed(1) : r.glucose;
+    addHistItem(hG, r.time, gVal, gUnit, trendOf(gArr));
+    addHistItem(hB, r.time, `${r.bpSys}/${r.bpDia}`, 'mmHg', trendOf(sArr.map((v,i)=>v + (dArr[i]||0)/3))); // simple combined slope
+    addHistItem(hT, r.time, (+r.temp).toFixed(1), '°C', trendOf(tArr));
+    addHistItem(hH, r.time, r.heart, 'BPM', trendOf(hArr));
   });
 }
 
-/* CSV Export (optional button) */
+/* CSV Export (History only, no AI suggestions) */
 function downloadCSV(){
   if (!userData.readings.length) { alert("No history to export."); return; }
   const rows = [
-    ["Time","Glucose (mg/dL)","BP Systolic","BP Diastolic","Temperature (°C)","Heart Rate (BPM)","AI Suggestions"]
+    ["Time","Glucose (mg/dL)","BP Systolic","BP Diastolic","Temperature (°C)","Heart Rate (BPM)"]
   ];
   userData.readings.forEach(r=>{
-    const sugg = userData.suggestions.find(s => s.time >= r.time);
     rows.push([
       new Date(r.time).toLocaleString(),
-      r.glucose, r.bpSys, r.bpDia, r.temp, r.heart,
-      sugg ? sugg.text.join(" | ") : ""
+      r.glucose, r.bpSys, r.bpDia, r.temp, r.heart
     ]);
   });
   const csv = rows.map(row => row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
@@ -354,66 +365,7 @@ function downloadCSV(){
   a.href = url; a.download = `Health_History_${session.email}.csv`; a.click();
   URL.revokeObjectURL(url);
 }
-const dlBtn = $('downloadCsvBtn');
-if (dlBtn) dlBtn.onclick = downloadCSV;
-
-/* ---------- Doctor Mode (optional section) ---------- */
-const csvUpload = $('csvUpload');
-if (csvUpload) {
-  csvUpload.addEventListener('change', (event)=>{
-    const file = event.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      const text = e.target.result;
-      const rows = text.split(/\r?\n/).filter(Boolean).map(r=>{
-        // basic CSV split respecting quotes
-        const out=[]; let cur='', inQ=false;
-        for (let i=0;i<r.length;i++){
-          const ch=r[i];
-          if(ch==='"' && r[i+1]==='"'){ cur+='"'; i++; continue; }
-          if(ch==='"'){ inQ=!inQ; continue; }
-          if(ch===',' && !inQ){ out.push(cur); cur=''; continue; }
-          cur+=ch;
-        }
-        out.push(cur);
-        return out.map(c=>c.replace(/^"|"$/g,''));
-      });
-      rows.shift(); // drop header
-      const readings = rows.map(r=>({
-        time:r[0], glucose:+r[1], bpSys:+r[2], bpDia:+r[3], temp:+r[4], heart:+r[5], suggestion:r[6]||""
-      }));
-      renderDoctorView(readings);
-    };
-    reader.readAsText(file);
-  });
-}
-
-function renderDoctorView(readings){
-  const out = $('doctorOutput');
-  const canvas = $('doctorChart');
-  if(!out || !canvas) return;
-
-  out.innerHTML = `<p>Imported ${readings.length} readings</p>`;
-  const ctxD = canvas.getContext('2d');
-  if(window.doctorChart) window.doctorChart.destroy();
-  window.doctorChart = new Chart(ctxD, {
-    type: 'line',
-    data: {
-      labels: readings.map(r=>r.time),
-      datasets: [
-        {label:"Glucose",      data:readings.map(r=>r.glucose), borderColor:"#ffffff", fill:false, tension:.3},
-        {label:"BP Systolic",  data:readings.map(r=>r.bpSys),   borderColor:"#ff4b5c", fill:false, tension:.3},
-        {label:"BP Diastolic", data:readings.map(r=>r.bpDia),   borderColor:"#65d2ff", fill:false, tension:.3},
-        {label:"Temperature",  data:readings.map(r=>r.temp),    borderColor:"#ffd166", fill:false, tension:.3},
-        {label:"Heart Rate",   data:readings.map(r=>r.heart),   borderColor:"#00ffb3", fill:false, tension:.3}
-      ]
-    },
-    options: chartOptions()
-  });
-
-  const suggs = readings.slice(-5).map(r=>`<li>${r.time}: ${r.suggestion || '—'}</li>`).join("");
-  out.innerHTML += `<h4>Recent AI Suggestions</h4><ul>${suggs}</ul>`;
-}
+$('downloadCsvBtn').onclick = downloadCSV;
 
 /* ---------- Live Data Generator ---------- */
 function addPoint(label, g,s,d,t,h){
@@ -428,7 +380,7 @@ function addPoint(label, g,s,d,t,h){
 
 function tick(){
   const now = new Date();
-  const timeLabel = now.toLocaleTimeString(); // e.g., 10:42:01 AM
+  const timeLabel = now.toLocaleTimeString();
 
   const latest = {
     glucose: Math.floor(85 + Math.random()*80),     // 85–165
@@ -440,22 +392,20 @@ function tick(){
 
   addPoint(timeLabel, latest.glucose, latest.bpSys, latest.bpDia, latest.temp, latest.heart);
 
-  // AI + Persist
-  const sugg = generateSuggestions();
-  updateSuggestionsPanel(sugg);
-
+  // Persist (no suggestions written to history)
   userData.readings.push({ time: now.toISOString(), ...latest });
-  if(userData.readings.length > 500) userData.readings.shift();
-  userData.suggestions.push({ time: now.toISOString(), text: sugg });
-  if(userData.suggestions.length > 200) userData.suggestions.shift();
+  if(userData.readings.length > 1000) userData.readings.shift();
   saveUserData(session.email, userData);
+
+  // update profile stats (streaks/achievements)
+  refreshProfileStats();
 
   render();
 }
 
 /* ---------- Bootstrap ---------- */
 setActiveTab('glucose');   // default tab
-// seed a few starting points so the chart isn't empty
+// seed starting points
 (function seed(){
   for(let i=5;i>0;i--){
     const t = new Date(Date.now() - i*60000);
@@ -468,14 +418,16 @@ setActiveTab('glucose');   // default tab
       +(36 + Math.random()*1.2).toFixed(1),
       Math.floor(60 + Math.random()*30)
     );
+    // persist seed too for history/streaks
+    userData.readings.push({ time: new Date(t).toISOString(),
+      glucose: series.glucose.at(-1),
+      bpSys: series.bpSys.at(-1),
+      bpDia: series.bpDia.at(-1),
+      temp: series.temp.at(-1),
+      heart: series.heart.at(-1)
+    });
   }
-  // initial suggestions render
-  const initS = generateSuggestions();
-  updateSuggestionsPanel(initS);
+  saveUserData(session.email, userData);
   render();
 })();
-setInterval(tick, 1000); // update every 1 seconds
-
-/* ---------- Optional: wire buttons if present ---------- */
-const histBtn = $('downloadCsvBtn');
-if (histBtn) histBtn.onclick = downloadCSV;
+setInterval(tick, 1000); // update every second
