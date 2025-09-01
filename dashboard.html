@@ -4,51 +4,37 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Health Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <!-- Header -->
   <header class="dash-header">
-    <div class="profile-box">
-      <div class="profile-avatar" id="profileAvatar">👤</div>
-      <div>
-        <div id="profileName" class="font-bold">User</div>
-        <div id="profileDetails" class="text-xs text-gray-400"></div>
-      </div>
-    </div>
+    <h1 id="welcome">Your Health Dashboard</h1>
     <div class="header-actions">
-      <button class="mode-toggle" id="modeBtn">🌙</button>
+      <button class="mode-toggle" id="modeBtn" title="Toggle dark/light">🌙</button>
       <button class="logout-btn" id="logoutBtn">Logout</button>
     </div>
   </header>
 
-  <!-- Tabs -->
   <nav class="tabs">
     <button class="tab active" data-tab="glucose" onclick="setActiveTab('glucose')">🩸 Glucose</button>
     <button class="tab" data-tab="bp" onclick="setActiveTab('bp')">🩺 Blood Pressure</button>
     <button class="tab" data-tab="temp" onclick="setActiveTab('temp')">🌡️ Temperature</button>
     <button class="tab" data-tab="heart" onclick="setActiveTab('heart')">❤️ Heart Rate</button>
-    <button class="tab" data-tab="history" onclick="setActiveTab('history')">📜 History</button>
   </nav>
 
-  <!-- Dashboard -->
-  <main class="dash-main px-4">
-    <!-- Metrics -->
+  <main class="dash-main">
     <section class="glass-card metric-card">
       <h2 id="metricTitle">Glucose</h2>
       <div class="metric-value" id="metricValue">--</div>
       <div class="metric-status" id="metricStatus">Waiting…</div>
     </section>
 
-    <!-- Chart -->
     <section class="glass-card chart-card">
       <h3 id="chartTitle">Glucose Trend</h3>
       <canvas id="metricChart"></canvas>
     </section>
 
-    <!-- Mini Grid -->
     <section class="mini-grid">
       <div class="mini glass-card"><div class="mini-title">Glucose</div><div class="mini-value" id="mini-glucose">--</div></div>
       <div class="mini glass-card"><div class="mini-title">BP</div><div class="mini-value" id="mini-bp">--/--</div></div>
@@ -56,22 +42,17 @@
       <div class="mini glass-card"><div class="mini-title">Heart</div><div class="mini-value" id="mini-heart">--</div></div>
     </section>
 
-    <!-- Suggestions -->
+    <!-- AI Suggestions -->
     <section class="glass-card suggestions-card">
       <h3>AI Health Assistant</h3>
       <ul id="suggestionList"></ul>
     </section>
-
-    <!-- History -->
-    <section id="historySection" class="glass-card" style="display:none;">
-      <h3>📜 Health History</h3>
-      <div id="historyLog"></div>
-      <button id="downloadCsvBtn" class="btn-primary mt-2">Download CSV</button>
-    </section>
   </main>
 
-  <!-- Toasts + Sound -->
+  <!-- Toast container -->
   <div id="toastContainer"></div>
+
+  <!-- Alert sound -->
   <audio id="alertSound" src="alert.mp3" preload="auto"></audio>
 
   <script src="dashboard.js"></script>
