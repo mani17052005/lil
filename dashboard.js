@@ -474,7 +474,7 @@ setActiveTab('glucose');   // default tab
   updateSuggestionsPanel(initS);
   render();
 })();
-setInterval(tick, 5000); // update every 5 seconds
+setInterval(tick, 2000); // update every 2 seconds
 
 /* ---------- Optional: wire buttons if present ---------- */
 const histBtn = $('downloadCsvBtn');
