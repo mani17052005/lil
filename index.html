@@ -3,38 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Health Tracker — Sign Up / Login</title>
+  <title>Next-Gen Gluco Tracker — Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"/>
 </head>
-<body>
-  <div class="auth-wrapper">
-    <div class="auth-box">
-      <h1>Next-Gen Gluco Tracker</h1>
+<body class="flex items-center justify-center min-h-screen bg-gray-900 text-white">
 
-      <!-- Sign Up -->
-      <div id="signupForm">
-        <h2>Create Account</h2>
-        <input type="email" id="signupEmail" placeholder="Email" autocomplete="username" required/>
-        <input type="password" id="signupPassword" placeholder="Password" autocomplete="new-password" required/>
-        <button class="btn-primary" id="signupBtn">Sign Up</button>
-        <p>Already have an account?
-          <a href="#" id="goLogin">Login</a>
-        </p>
-      </div>
+  <div class="auth-wrapper glass-card w-96">
+    <h1 class="text-2xl font-bold text-center mb-4">Next-Gen Gluco Tracker</h1>
 
-      <!-- Login -->
-      <div id="loginForm" style="display:none;">
-        <h2>Welcome Back</h2>
-        <input type="email" id="loginEmail" placeholder="Email" autocomplete="username" required/>
-        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required/>
-        <label class="remember">
-          <input type="checkbox" id="rememberMe" checked/> Remember me
-        </label>
-        <button class="btn-primary" id="loginBtn">Login</button>
-        <p>No account?
-          <a href="#" id="goSignup">Create one</a>
-        </p>
-      </div>
+    <!-- Sign Up -->
+    <div id="signupForm">
+      <h2 class="text-xl mb-2">Create Account</h2>
+      <input type="text" id="signupName" placeholder="Full Name" class="w-full mb-2 p-2 rounded text-black"/>
+      <input type="number" id="signupAge" placeholder="Age" class="w-full mb-2 p-2 rounded text-black"/>
+      <input type="text" id="signupGender" placeholder="Gender" class="w-full mb-2 p-2 rounded text-black"/>
+      <input type="text" id="signupBlood" placeholder="Blood Group" class="w-full mb-2 p-2 rounded text-black"/>
+      <input type="email" id="signupEmail" placeholder="Email" class="w-full mb-2 p-2 rounded text-black"/>
+      <input type="password" id="signupPassword" placeholder="Password" class="w-full mb-2 p-2 rounded text-black"/>
+      <button class="btn-primary w-full py-2" id="signupBtn">Sign Up</button>
+      <p class="text-sm mt-2">Already have an account?
+        <a href="#" id="goLogin" class="text-blue-400">Login</a>
+      </p>
+    </div>
+
+    <!-- Login -->
+    <div id="loginForm" style="display:none;">
+      <h2 class="text-xl mb-2">Welcome Back</h2>
+      <input type="email" id="loginEmail" placeholder="Email" class="w-full mb-2 p-2 rounded text-black"/>
+      <input type="password" id="loginPassword" placeholder="Password" class="w-full mb-2 p-2 rounded text-black"/>
+      <label class="flex items-center text-sm">
+        <input type="checkbox" id="rememberMe" checked class="mr-2"/> Remember me
+      </label>
+      <button class="btn-primary w-full py-2 mt-2" id="loginBtn">Login</button>
+      <p class="text-sm mt-2">No account?
+        <a href="#" id="goSignup" class="text-blue-400">Create one</a>
+      </p>
     </div>
   </div>
 
