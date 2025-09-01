@@ -1,6 +1,7 @@
-// --------- Utilities ---------
-const USERS_KEY = 'ht_users';
-const SESSION_KEY = 'ht_session';
+// --------- Utilities / Storage Keys ---------
+const USERS_KEY     = 'ht_users';
+const SESSION_KEY   = 'ht_session';
+const PROFILE_KEY   = 'ht_user_profiles'; // per-user profile blob
 
 const $ = (id) => document.getElementById(id);
 
@@ -16,6 +17,7 @@ async function sha256(text){
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
+// Users
 function loadUsers(){
   try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
   catch { return []; }
@@ -23,6 +25,8 @@ function loadUsers(){
 function saveUsers(users){
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
+
+// Session
 function setSession(email, remember=true){
   localStorage.setItem(SESSION_KEY, JSON.stringify({email, ts: Date.now(), remember}));
 }
@@ -31,6 +35,32 @@ function getSession(){
   catch { return null; }
 }
 function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+
+// Profiles
+function loadProfiles(){
+  try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveProfiles(blob){
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(blob));
+}
+function ensureDefaultProfile(email){
+  const all = loadProfiles();
+  if(!all[email]){
+    const name = email.split('@')[0];
+    all[email] = {
+      email,
+      name,
+      avatar: '😀',
+      units: 'mgdl',   // mg/dL (or mmol)
+      theme: 'dark',
+      goals: { dailyReadings: 10 },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    saveProfiles(all);
+  }
+}
 
 // --------- Sign Up ---------
 async function signup(){
@@ -48,6 +78,10 @@ async function signup(){
   const passHash = await sha256(password);
   users.push({email, passHash, createdAt: new Date().toISOString()});
   saveUsers(users);
+
+  // create default profile
+  ensureDefaultProfile(email);
+
   alert('Account created! You can login now.');
   toggleForm('login');
   $('loginEmail').value = email;
@@ -73,7 +107,11 @@ async function login(){
 // --------- Init ---------
 (function init(){
   const session = getSession();
-  if(session && session.email) { location.href = 'dashboard.html'; return; }
+  if(session && session.email) {
+    // already logged in -> go to dashboard
+    // (if you're testing and want to stay here, comment the next line)
+    // location.href = 'dashboard.html';
+  }
 
   $('signupBtn').onclick = signup;
   $('loginBtn').onclick = login;
