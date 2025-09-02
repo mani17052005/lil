@@ -8,33 +8,129 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <!-- Top bar -->
   <header class="dash-header">
-    <h1 id="welcome">Your Health Dashboard</h1>
+    <!-- Profile (top-left) -->
+    <button id="profileBtn" class="profile-chip">
+      <span id="profileAvatar">😀</span>
+      <span id="profileName">Profile</span>
+    </button>
+
+    <h1 class="title-center">Your Health Dashboard</h1>
+
     <div class="header-actions">
       <button class="mode-toggle" id="modeBtn" title="Toggle dark/light">🌙</button>
       <button class="logout-btn" id="logoutBtn">Logout</button>
     </div>
   </header>
 
+  <!-- Profile drawer -->
+  <aside id="profileDrawer" class="profile-drawer glass-card">
+    <div class="drawer-header">
+      <h3>Profile</h3>
+      <button id="closeProfile" class="icon-btn">✖</button>
+    </div>
+
+    <div class="profile-section">
+      <label>Display Name</label>
+      <input id="p_name" type="text" placeholder="Your name"/>
+    </div>
+
+    <div class="profile-row">
+      <div class="profile-section">
+        <label>Avatar (emoji)</label>
+        <input id="p_avatar" type="text" placeholder="😀"/>
+      </div>
+      <div class="profile-section">
+        <label>Preferred Units</label>
+        <select id="p_units">
+          <option value="mgdl">Glucose: mg/dL</option>
+          <option value="mmol">Glucose: mmol/L</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="profile-row">
+      <div class="profile-section">
+        <label>Theme</label>
+        <select id="p_theme">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+      <div class="profile-section">
+        <label>Daily Reading Goal</label>
+        <input id="p_goal_daily_readings" type="number" min="1" max="50" value="10"/>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="profile-stats">
+      <div class="stat">
+        <div class="stat-label">Current Streak</div>
+        <div class="stat-value" id="streakDays">0 days</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total Readings</div>
+        <div class="stat-value" id="totalReadings">0</div>
+      </div>
+      <div class="achievements">
+        <div class="ach-title">Achievements</div>
+        <ul id="achList"></ul>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <button id="saveProfile" class="btn-primary">Save Profile</button>
+      <button id="resetGoals" class="btn-secondary">Reset Goals</button>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq">
+      <h3>FAQ</h3>
+      <div class="faq-item">
+        <button class="faq-q">How is my streak calculated?</button>
+        <div class="faq-a">We count consecutive days that have at least one saved reading.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How do goals work?</button>
+        <div class="faq-a">Set a daily target for number of readings. We’ll show progress and unlock achievements.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I export my data?</button>
+        <div class="faq-a">Yes. Use the “Download CSV” button in the History tab to export all readings.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What about privacy?</button>
+        <div class="faq-a">All data is stored only in your browser (localStorage). No cloud upload.</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Tabs -->
   <nav class="tabs">
     <button class="tab active" data-tab="glucose" onclick="setActiveTab('glucose')">🩸 Glucose</button>
     <button class="tab" data-tab="bp" onclick="setActiveTab('bp')">🩺 Blood Pressure</button>
     <button class="tab" data-tab="temp" onclick="setActiveTab('temp')">🌡️ Temperature</button>
     <button class="tab" data-tab="heart" onclick="setActiveTab('heart')">❤️ Heart Rate</button>
+    <button class="tab" data-tab="history" onclick="setActiveTab('history')">🕓 History</button>
   </nav>
 
   <main class="dash-main">
+    <!-- Metric summary -->
     <section class="glass-card metric-card">
       <h2 id="metricTitle">Glucose</h2>
       <div class="metric-value" id="metricValue">--</div>
       <div class="metric-status" id="metricStatus">Waiting…</div>
     </section>
 
+    <!-- Chart -->
     <section class="glass-card chart-card">
       <h3 id="chartTitle">Glucose Trend</h3>
       <canvas id="metricChart"></canvas>
     </section>
 
+    <!-- Mini cards -->
     <section class="mini-grid">
       <div class="mini glass-card"><div class="mini-title">Glucose</div><div class="mini-value" id="mini-glucose">--</div></div>
       <div class="mini glass-card"><div class="mini-title">BP</div><div class="mini-value" id="mini-bp">--/--</div></div>
@@ -47,14 +143,33 @@
       <h3>AI Health Assistant</h3>
       <ul id="suggestionList"></ul>
     </section>
+
+    <!-- History tab -->
+    <section id="historySection" class="glass-card history-card" style="display:none;">
+      <div class="history-header">
+        <h3>Reading History</h3>
+        <button id="downloadCsvBtn" class="btn-secondary">Download CSV</button>
+      </div>
+
+      <div class="history-grid">
+        <div class="history-col">
+          <h4>Glucose</h4>
+          <ul id="hist-glucose" class="hist-list"></ul>
+        </div>
+        <div class="history-col">
+          <h4>Blood Pressure</h4>
+          <ul id="hist-bp" class="hist-list"></ul>
+        </div>
+        <div class="history-col">
+          <h4>Temperature</h4>
+          <ul id="hist-temp" class="hist-list"></ul>
+        </div>
+        <div class="history-col">
+          <h4>Heart Rate</h4>
+          <ul id="hist-heart" class="hist-list"></ul>
+        </div>
+      </div>
+    </section>
   </main>
-
-  <!-- Toast container -->
-  <div id="toastContainer"></div>
-
-  <!-- Alert sound -->
-  <audio id="alertSound" src="alert.mp3" preload="auto"></audio>
-
-  <script src="dashboard.js"></script>
 </body>
 </html>
