@@ -144,20 +144,22 @@ function updateSuggestionsPanel(messages){
   });
 }
 
-/* Readings UI */
+/* Readings UI - only latest reading */
 function pushReadingLists(){
   const fmt = t => new Date(t).toLocaleString();
   const g = $('readings-glucose'), b = $('readings-bp'), tp = $('readings-temp'), h = $('readings-heart');
   if(!g||!b||!tp||!h) return;
 
-  const gl = userData.readings.map(r=>({t:r.time, v:r.glucose})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.v} mg/dL`).join('');
-  g.innerHTML = gl;
-  const bp = userData.readings.map(r=>({t:r.time, s:r.bpSys, d:r.bpDia})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.s}/${r.d} mmHg`).join('');
-  b.innerHTML = bp;
-  const tmp = userData.readings.map(r=>({t:r.time, v:r.temp})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.v} °C`).join('');
-  tp.innerHTML = tmp;
-  const hr = userData.readings.map(r=>({t:r.time, v:r.heart})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.v} BPM`).join('');
-  h.innerHTML = hr;
+  const latest = userData.readings.at(-1);
+  if(!latest){
+    g.innerHTML = b.innerHTML = tp.innerHTML = h.innerHTML = '';
+    return;
+  }
+
+  g.innerHTML = `<li>${fmt(latest.time)} — ${latest.glucose} mg/dL</li>`;
+  b.innerHTML = `<li>${fmt(latest.time)} — ${latest.bpSys}/${latest.bpDia} mmHg</li>`;
+  tp.innerHTML = `<li>${fmt(latest.time)} — ${latest.temp} °C</li>`;
+  h.innerHTML = `<li>${fmt(latest.time)} — ${latest.heart} BPM</li>`;
 }
 
 /* Status pills */
