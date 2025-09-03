@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Health Tracker — Auth</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body class="auth-body">
   <div class="auth-wrapper glass auth-card">
     <h1 class="brand">Health Tracker</h1>
 
-    <!-- LOGIN (shown by default) -->
+    <!-- LOGIN -->
     <form id="loginForm" class="form-stack">
       <h2>Login</h2>
       <label>Email
@@ -20,16 +20,16 @@
         <input type="password" id="loginPassword" autocomplete="current-password" required />
       </label>
       <label class="remember">
-        <input type="checkbox" id="rememberMe" checked /> Remember me
+        <input type="checkbox" id="rememberMe" checked/> Remember me
       </label>
-      <div style="display:flex; gap:10px;">
+      <div style="display:flex; gap:10px; justify-content:center;">
         <button type="button" id="loginBtn" class="btn-primary">Login</button>
         <button type="button" id="showSignup" class="btn-secondary">Sign Up</button>
       </div>
       <p class="muted"><a href="#" id="showForgot">Forgot password?</a></p>
     </form>
 
-    <!-- SIGNUP (hidden initially) -->
+    <!-- SIGNUP -->
     <form id="signupForm" class="form-stack hidden">
       <h2>Create Account</h2>
       <label>Email
@@ -38,9 +38,9 @@
       <label>Password
         <input type="password" id="signupPassword" autocomplete="new-password" required />
       </label>
-      <div style="display:flex; gap:10px;">
+      <div style="display:flex; gap:10px; justify-content:center;">
         <button type="button" id="signupBtn" class="btn-primary">Sign Up</button>
-        <button type="button" id="showLogin" class="btn-secondary">Back to Login</button>
+        <button type="button" id="showLogin" class="btn-secondary">Back</button>
       </div>
     </form>
   </div>
@@ -49,12 +49,12 @@
   <div id="forgotModal" class="glass auth-card hidden" style="position:fixed; inset:0; margin:auto; width:min(420px,92%); z-index:50;">
     <h2>Reset Password</h2>
     <label>Email
-      <input type="email" id="forgotEmail" autocomplete="email" placeholder="your@email.com" />
+      <input type="email" id="forgotEmail" placeholder="you@email.com" />
     </label>
     <label>New Password
-      <input type="password" id="forgotNewPassword" autocomplete="new-password" placeholder="New password" />
+      <input type="password" id="forgotNewPassword" placeholder="New password" />
     </label>
-    <div style="display:flex; gap:10px; margin-top:10px;">
+    <div style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
       <button type="button" id="resetBtn" class="btn-primary">Reset Password</button>
       <button type="button" id="cancelReset" class="btn-secondary">Cancel</button>
     </div>
