@@ -30,7 +30,6 @@ function getSession(){
   try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
   catch { return null; }
 }
-function clearSession(){ localStorage.removeItem(SESSION_KEY); }
 
 // --------- Sign Up ---------
 async function signup(){
@@ -48,6 +47,12 @@ async function signup(){
   const passHash = await sha256(password);
   users.push({email, passHash, createdAt: new Date().toISOString()});
   saveUsers(users);
+
+  // create default profile blob for this user
+  const blob = JSON.parse(localStorage.getItem('ht_user_data') || '{}');
+  blob[email] = blob[email] || { profile: {}, readings: [], suggestions: [] };
+  localStorage.setItem('ht_user_data', JSON.stringify(blob));
+
   alert('Account created! You can login now.');
   toggleForm('login');
   $('loginEmail').value = email;
