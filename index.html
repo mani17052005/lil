@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Health Tracker — Sign Up / Login</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
-<body>
+<body class="auth-body">
   <div class="auth-wrapper">
-    <div class="auth-box">
-      <h1>Next-Gen Gluco Tracker</h1>
+    <div class="auth-card glass">
+      <h1 class="brand">Health Tracker</h1>
 
       <!-- Sign Up -->
-      <div id="signupForm">
+      <form id="signupForm" class="form-stack">
         <h2>Create Account</h2>
-        <input type="email" id="signupEmail" placeholder="Email" autocomplete="username" required/>
-        <input type="password" id="signupPassword" placeholder="Password" autocomplete="new-password" required/>
-        <button class="btn-primary" id="signupBtn">Sign Up</button>
-        <p>Already have an account?
+        <label>Email
+          <input type="email" id="signupEmail" placeholder="you@email.com" autocomplete="username" required/>
+        </label>
+        <label>Password
+          <input type="password" id="signupPassword" placeholder="••••••••" autocomplete="new-password" required/>
+        </label>
+        <button type="button" class="btn-primary" id="signupBtn">Sign Up</button>
+        <p class="muted">Already have an account?
           <a href="#" id="goLogin">Login</a>
         </p>
-      </div>
+      </form>
 
       <!-- Login -->
-      <div id="loginForm" style="display:none;">
+      <form id="loginForm" class="form-stack" style="display:none;">
         <h2>Welcome Back</h2>
-        <input type="email" id="loginEmail" placeholder="Email" autocomplete="username" required/>
-        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required/>
+        <label>Email
+          <input type="email" id="loginEmail" placeholder="you@email.com" autocomplete="username" required/>
+        </label>
+        <label>Password
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required/>
+        </label>
         <label class="remember">
           <input type="checkbox" id="rememberMe" checked/> Remember me
         </label>
-        <button class="btn-primary" id="loginBtn">Login</button>
-        <p>No account?
+        <button type="button" class="btn-primary" id="loginBtn">Login</button>
+        <p class="muted">No account?
           <a href="#" id="goSignup">Create one</a>
         </p>
-      </div>
+      </form>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
