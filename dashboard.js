@@ -1,28 +1,26 @@
-/* ---------- Keys & Session ---------- */
+/* dashboard.js - charts, demo readings, profile, history, CSV, persistence */
+
 const SESSION_KEY = 'ht_session';
-const USER_DATA   = 'ht_user_data';
+const USER_DATA = 'ht_user_data';
 
 const $ = id => document.getElementById(id);
 
 function getSession(){ try { return JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } }
 function clearSession(){ localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); }
+function loadBlob(){ try { return JSON.parse(localStorage.getItem(USER_DATA) || '{}'); } catch { return {}; } }
+function saveBlob(b){ localStorage.setItem(USER_DATA, JSON.stringify(b)); }
 
 const session = getSession();
 if(!session?.email) { location.href = 'index.html'; }
 const email = session.email;
 
-/* ---------- Persisted user blob ---------- */
-function loadBlob(){ try { return JSON.parse(localStorage.getItem(USER_DATA) || '{}'); } catch { return {}; } }
-function saveBlob(b){ localStorage.setItem(USER_DATA, JSON.stringify(b)); }
-
 const blob = loadBlob();
-blob[email] = blob[email] || { profile: {}, readings: [], suggestions: [] };
+blob[email] = blob[email] || { profile:{}, readings:[], suggestions:[] };
 let userData = blob[email];
 
-/* ---------- Profile panel ---------- */
-const openProfileBtn = $('openProfile'), closeProfileBtn = $('closeProfile'), profilePanel = $('profilePanel');
-openProfileBtn.onclick = () => { profilePanel.classList.add('open'); profilePanel.setAttribute('aria-hidden','false'); };
-closeProfileBtn.onclick = () => { profilePanel.classList.remove('open'); profilePanel.setAttribute('aria-hidden','true'); };
+/* Profile panel */
+$('openProfile').onclick = () => { $('profilePanel').classList.add('open'); $('profilePanel').setAttribute('aria-hidden','false'); };
+$('closeProfile').onclick = () => { $('profilePanel').classList.remove('open'); $('profilePanel').setAttribute('aria-hidden','true'); };
 
 const pf = {
   name: $('pf_name'), age: $('pf_age'), gender: $('pf_gender'),
@@ -32,7 +30,7 @@ const pf = {
 function hydrateProfile(){
   const p = userData.profile || {};
   pf.name.value = p.name || '';
-  pf.age.value  = p.age || '';
+  pf.age.value = p.age || '';
   pf.gender.value = p.gender || '';
   pf.height.value = p.height || '';
   pf.weight.value = p.weight || '';
@@ -56,10 +54,10 @@ function persistProfile(){
   showToast('Profile saved.');
 }
 $('saveProfile').onclick = persistProfile;
-$('logoutBtn').onclick = () => { clearSession(); location.href='index.html'; };
+$('logoutBtn').onclick = () => { clearSession(); location.href = 'index.html'; };
 hydrateProfile();
 
-/* ---------- Charts setup ---------- */
+/* Charts */
 const MAX_POINTS = 30;
 let labels = [], series = { glucose: [], bpSys: [], bpDia: [], temp: [], heart: [] };
 
@@ -96,7 +94,7 @@ charts.heart = new Chart($('chart-heart').getContext('2d'), {
   options: baseOptions()
 });
 
-/* ---------- Status helpers ---------- */
+/* Status helper */
 function statusFor(metric, value){
   if(value === undefined || value === null || isNaN(value)) return {text:'--', cls:''};
   switch(metric){
@@ -122,7 +120,7 @@ function statusFor(metric, value){
   }
 }
 
-/* ---------- Toasts & Suggestions ---------- */
+/* Toasts & suggestions */
 function showToast(message, type='normal'){
   const container = $('toastContainer');
   if(!container) return;
@@ -133,13 +131,11 @@ function showToast(message, type='normal'){
   if(type==='urgent'){ const s=$('alertSound'); if(s){ s.currentTime=0; s.play().catch(()=>{}); } }
   setTimeout(()=>{ toast.classList.add('fade-out'); setTimeout(()=>toast.remove(),500); }, 3500);
 }
-
 function updateSuggestionsPanel(messages){
   const ul = $('suggestionList'); if(!ul) return;
   ul.innerHTML = '';
   messages.slice(-5).forEach(msg=>{
-    const li = document.createElement('li');
-    li.textContent = msg;
+    const li = document.createElement('li'); li.textContent = msg;
     if(msg.includes('🚨')) li.className = 'sugg-urgent';
     else if(msg.includes('⚠️')) li.className = 'sugg-warning';
     else if(msg.includes('✅')) li.className = 'sugg-good';
@@ -148,30 +144,23 @@ function updateSuggestionsPanel(messages){
   });
 }
 
-/* ---------- Readings UI ---------- */
+/* Readings UI */
 function pushReadingLists(){
-  const formatTime = t => new Date(t).toLocaleString();
-  const gl = $('readings-glucose'), bp = $('readings-bp'), tmp = $('readings-temp'), hr = $('readings-heart');
-  if(!gl||!bp||!tmp||!hr) return;
+  const fmt = t => new Date(t).toLocaleString();
+  const g = $('readings-glucose'), b = $('readings-bp'), tp = $('readings-temp'), h = $('readings-heart');
+  if(!g||!b||!tp||!h) return;
 
-  function makeList(arr, formatter){
-    return arr.slice(-6).reverse().map(v=>`<li>${formatter(v)}</li>`).join('');
-  }
-
-  const gArr = userData.readings.map(r=>({time:r.time, v:r.glucose}));
-  gl.innerHTML = makeList(gArr, r=>`${formatTime(r.time)} — ${r.v} mg/dL`);
-
-  const bpArr = userData.readings.map(r=>({time:r.time, s:r.bpSys, d:r.bpDia}));
-  bp.innerHTML = makeList(bpArr, r=>`${formatTime(r.time)} — ${r.s}/${r.d} mmHg`);
-
-  const tArr = userData.readings.map(r=>({time:r.time, v:r.temp}));
-  tmp.innerHTML = makeList(tArr, r=>`${formatTime(r.time)} — ${r.v} °C`);
-
-  const hArr = userData.readings.map(r=>({time:r.time, v:r.heart}));
-  hr.innerHTML = makeList(hArr, r=>`${formatTime(r.time)} — ${r.v} BPM`);
+  const gl = userData.readings.map(r=>({t:r.time, v:r.glucose})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.v} mg/dL`).join('');
+  g.innerHTML = gl;
+  const bp = userData.readings.map(r=>({t:r.time, s:r.bpSys, d:r.bpDia})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.s}/${r.d} mmHg`).join('');
+  b.innerHTML = bp;
+  const tmp = userData.readings.map(r=>({t:r.time, v:r.temp})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.v} °C`).join('');
+  tp.innerHTML = tmp;
+  const hr = userData.readings.map(r=>({t:r.time, v:r.heart})).slice(-6).reverse().map(r=>`<li>${fmt(r.t)} — ${r.v} BPM`).join('');
+  h.innerHTML = hr;
 }
 
-/* ---------- Status pills ---------- */
+/* Status pills */
 function setStatusPills(){
   const g = series.glucose.at(-1), s = series.bpSys.at(-1), d = series.bpDia.at(-1), t = series.temp.at(-1), h = series.heart.at(-1);
   const stG = statusFor('glucose', g); $('status-glucose').textContent = stG.text; $('status-glucose').className = `pill ${stG.cls}`;
@@ -180,7 +169,7 @@ function setStatusPills(){
   const stH = statusFor('heart', h); $('status-heart').textContent = stH.text; $('status-heart').className = `pill ${stH.cls}`;
 }
 
-/* ---------- History ---------- */
+/* History */
 function renderHistory(){
   const log = $('historyLog'); if(!log) return;
   log.innerHTML = '';
@@ -193,7 +182,7 @@ function renderHistory(){
   });
 }
 
-/* ---------- Alerts ---------- */
+/* Alerts */
 function checkAlerts(){
   const g = series.glucose.at(-1), s = series.bpSys.at(-1), d = series.bpDia.at(-1), t = series.temp.at(-1), h = series.heart.at(-1);
   if(g > 180) showToast(`Glucose very high (${g} mg/dL).`, 'urgent');
@@ -202,7 +191,7 @@ function checkAlerts(){
   if(h > 130) showToast(`Heart rate elevated (${h} BPM).`, 'urgent');
 }
 
-/* ---------- AI suggestions ---------- */
+/* Suggestions logic */
 function generateSuggestions(){
   const latest = { glucose: series.glucose.at(-1), bpSys: series.bpSys.at(-1), bpDia: series.bpDia.at(-1), temp: series.temp.at(-1), heart: series.heart.at(-1) };
   const messages = [];
@@ -210,25 +199,19 @@ function generateSuggestions(){
   else if(latest.glucose < 70) messages.push("⚠️ Low glucose: take 15g fast-acting carbs and recheck in 15 min.");
   else messages.push("✅ Glucose within target range.");
 
-  if(latest.bpSys > 140 || latest.bpDia > 90) messages.push("⚠️ High BP: relax, reduce salt, deep breathing.");
-  else messages.push("✅ Blood pressure looks fine.");
-
-  if(latest.temp > 38) messages.push("🤒 Fever: rest, hydrate, antipyretic as advised.");
-  else messages.push("✅ Temperature is normal.");
-
-  if(latest.heart > 100) messages.push("⚠️ Elevated heart rate: rest and avoid stimulants.");
-  else messages.push("✅ Heart rate in range.");
+  if(latest.bpSys > 140 || latest.bpDia > 90) messages.push("⚠️ High BP: relax, reduce salt, deep breathing."); else messages.push("✅ Blood pressure looks fine.");
+  if(latest.temp > 38) messages.push("🤒 Fever: rest, hydrate, antipyretic as advised."); else messages.push("✅ Temperature is normal.");
+  if(latest.heart > 100) messages.push("⚠️ Elevated heart rate: rest and avoid stimulants."); else messages.push("✅ Heart rate in range.");
 
   if(series.glucose.length > 1 && Math.abs(series.glucose.at(-1)-series.glucose.at(-2))>40) messages.push("⚠️ Rapid glucose swing detected — review recent meals/insulin/activity.");
 
   const allGood = latest.glucose>=90 && latest.glucose<=120 && latest.bpSys>=100 && latest.bpSys<=130 && latest.temp>=36 && latest.temp<=37.5 && latest.heart>=60 && latest.heart<=90;
   if(allGood) messages.push("✅ All readings stable — keep it up!");
-
   return messages;
 }
 
-/* ---------- Live data feed (demo generator) ---------- */
-function addPoint(label, g, s, d, t, h){
+/* Data feed */
+function addPoint(label,g,s,d,t,h){
   labels.push(label); if(labels.length>MAX_POINTS) labels.shift();
   series.glucose.push(g); if(series.glucose.length>MAX_POINTS) series.glucose.shift();
   series.bpSys.push(s); if(series.bpSys.length>MAX_POINTS) series.bpSys.shift();
@@ -236,30 +219,28 @@ function addPoint(label, g, s, d, t, h){
   series.temp.push(t); if(series.temp.length>MAX_POINTS) series.temp.shift();
   series.heart.push(h); if(series.heart.length>MAX_POINTS) series.heart.shift();
 }
-
-function renderChartsAndUI(){
+function renderAll(){
   charts.glucose.update(); charts.bp.update(); charts.temp.update(); charts.heart.update();
   setStatusPills(); pushReadingLists(); renderHistory();
 }
 
-/* single tick: produce demo data, persist and update UI */
+/* tick - simulated readings */
 function tick(){
   const now = new Date();
-  const tlabel = now.toLocaleTimeString();
+  const label = now.toLocaleTimeString();
   const latest = {
-    glucose: Math.floor(85 + Math.random()*80),    // 85–165
-    bpSys:   Math.floor(105 + Math.random()*40),   // 105–145
-    bpDia:   Math.floor(65 + Math.random()*25),    // 65–90
-    temp:    +(36 + Math.random()*2.8).toFixed(1), // 36.0–38.8
-    heart:   Math.floor(55 + Math.random()*65)     // 55–120
+    glucose: Math.floor(85 + Math.random()*80),
+    bpSys: Math.floor(105 + Math.random()*40),
+    bpDia: Math.floor(65 + Math.random()*25),
+    temp: +(36 + Math.random()*2.8).toFixed(1),
+    heart: Math.floor(55 + Math.random()*65)
   };
 
-  addPoint(tlabel, latest.glucose, latest.bpSys, latest.bpDia, latest.temp, latest.heart);
+  addPoint(label, latest.glucose, latest.bpSys, latest.bpDia, latest.temp, latest.heart);
 
-  // persist reading
   userData.readings.push({ time: now.toISOString(), ...latest });
   if(userData.readings.length > 1000) userData.readings.shift();
-  // store suggestions
+
   const sugg = generateSuggestions();
   userData.suggestions.push({ time: now.toISOString(), text: sugg });
   if(userData.suggestions.length > 400) userData.suggestions.shift();
@@ -269,10 +250,10 @@ function tick(){
 
   updateSuggestionsPanel(sugg);
   checkAlerts();
-  renderChartsAndUI();
+  renderAll();
 }
 
-/* ---------- Bootstrap ---------- */
+/* Seed initial points */
 (function seed(){
   for(let i=5;i>0;i--){
     const t = new Date(Date.now() - i*60000).toLocaleTimeString();
@@ -280,11 +261,11 @@ function tick(){
   }
   const initS = generateSuggestions();
   updateSuggestionsPanel(initS);
-  renderChartsAndUI();
+  renderAll();
 })();
 const intervalId = setInterval(tick, 5000);
 
-/* ---------- CSV export & clear history ---------- */
+/* CSV export & clear history */
 $('downloadCsvBtn').onclick = () => {
   if(!userData.readings.length){ alert('No history to export.'); return; }
   const rows = [['Time','Glucose (mg/dL)','BP Systolic','BP Diastolic','Temperature (°C)','Heart Rate (BPM)']];
@@ -292,21 +273,19 @@ $('downloadCsvBtn').onclick = () => {
   const csv = rows.map(r => r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
   const blobFile = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blobFile);
-  const a = document.createElement('a');
-  a.href = url; a.download = `Health_History_${(userData.profile?.name||'user')}.csv`; a.click();
+  const a = document.createElement('a'); a.href = url; a.download = `Health_History_${(userData.profile?.name||'user')}.csv`; a.click();
   URL.revokeObjectURL(url);
 };
 
 $('clearHistoryBtn').onclick = () => {
   if(!confirm('Clear all saved history? This cannot be undone.')) return;
-  userData.readings = [];
-  blob[email] = userData; saveBlob(blob);
+  userData.readings = []; blob[email] = userData; saveBlob(blob);
   renderHistory(); pushReadingLists();
   showToast('History cleared.');
 };
 
-/* ---------- Safe theme toggle (light/dark) ---------- */
+/* Theme toggle */
 $('themeBtn').onclick = () => {
   document.body.classList.toggle('light');
-  Object.values(charts).forEach(ch => ch.update());
+  Object.values(charts).forEach(ch=>ch.update());
 };
