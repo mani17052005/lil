@@ -39,7 +39,8 @@ body {
 
 /* ---------- Auth Pages ---------- */
 .auth-body { display: grid; place-items: center; min-height: 100vh; padding: 20px; }
-.auth-wrapper { width: min(480px, 92vw); }
+.auth-wrapper { width: min(520px, 96vw); animation: fadeInUp .45s ease; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 .glass {
   background: var(--glass);
   border: 1px solid var(--border);
@@ -48,7 +49,7 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 .auth-card { padding: 28px; }
-.brand { margin-bottom: 12px; font-weight: 800; font-size: 1.6rem; letter-spacing: .3px; }
+.brand { margin-bottom: 12px; font-weight: 800; font-size: 1.6rem; letter-spacing: .3px; text-align:center; }
 .form-stack { display: grid; gap: 14px; }
 .form-stack h2 { margin-bottom: 6px; font-size: 1.15rem; }
 label { display: grid; gap: 6px; font-size: 14px; }
@@ -63,8 +64,8 @@ input, select, textarea {
   transition: border-color .2s ease, background .2s ease;
 }
 input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-body.light input, body.light select, body.light textarea { background: rgba(255,255,255,0.8); }
-.muted { color: var(--muted); font-size: 13px; }
+body.light input, body.light select, body.light textarea { background: rgba(255,255,255,0.9); color: var(--text); }
+.muted { color: var(--muted); font-size: 13px; text-align:center; }
 .remember { display: flex; align-items: center; gap: 8px; font-size: 14px; }
 
 /* ---------- Buttons ---------- */
@@ -78,7 +79,7 @@ button, .btn-primary, .btn-secondary, .btn-danger, .icon-btn, .profile-trigger {
   transition: background .25s ease, transform .12s ease;
 }
 button:active { transform: scale(.99); }
-.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 18px rgba(124,92,255,0.14); }
 .btn-secondary { background: var(--pill); color: var(--text); border: 1px solid var(--border); }
 .btn-danger { background: var(--bad); color: #fff; }
 .icon-btn, .profile-trigger { background: var(--pill); color: var(--text); border: 1px solid var(--border); }
@@ -99,7 +100,7 @@ button:active { transform: scale(.99); }
   background: var(--glass); border-right: 1px solid var(--border); z-index: 10; padding: 14px;
 }
 .profile-panel.open { transform: translateX(0); }
-.profile-header { display:flex; align-items:center; justify-content:space-between; }
+.profile-header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .profile-form { display:grid; gap:10px; margin-top:10px; }
 .profile-actions { display:flex; gap:10px; margin-top:8px; }
 .faq-block { border:1px dashed var(--border); border-radius:12px; padding:8px 10px; }
@@ -121,19 +122,19 @@ button:active { transform: scale(.99); }
 
 /* ---------- Cards ---------- */
 .card { padding: 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--border); }
-.card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px; }
+.card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px; gap:8px; }
 .pill { padding: 6px 10px; border-radius: 999px; background: var(--pill); border: 1px solid var(--border); font-size: 13px; }
 
 /* ---------- Readings ---------- */
 .reading-row { display:grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-top: 10px; }
 .reading-col .unit-note, .normal-note { color: var(--muted); font-size: 13px; margin: 4px 0; }
-.readings { list-style: none; display: grid; gap: 6px; }
+.readings { list-style: none; display: grid; gap: 6px; padding: 0; margin:0; }
 .readings li { padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: rgba(0,0,0,0.12); }
-body.light .readings li { background: rgba(255,255,255,0.7); }
+body.light .readings li { background: rgba(255,255,255,0.87); color: var(--text); }
 
 /* ---------- History ---------- */
 .history { padding: 14px; }
-.history-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px; }
+.history-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px; gap:10px; }
 .history-log { display:grid; gap: 8px; }
 .history-item { padding: 10px; border:1px solid var(--border); border-radius: 10px; background: rgba(0,0,0,0.12); }
 .history-time { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
